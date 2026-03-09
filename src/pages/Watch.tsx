@@ -29,16 +29,16 @@ const PROVIDERS = [
       `https://vidsrc.cc/v2/embed/tv/${id}/${s ?? 1}/${e ?? 1}`,
   },
   {
-    name: "UpCloud",
-    movie: (id: string) => `https://vidsrc.icu/embed/movie/${id}`,
+    name: "VidLink",
+    movie: (id: string) => `https://vidlink.pro/movie/${id}`,
     tv: (id: string, s?: number, e?: number) =>
-      `https://vidsrc.icu/embed/tv/${id}/${s ?? 1}/${e ?? 1}`,
+      `https://vidlink.pro/tv/${id}/${s ?? 1}/${e ?? 1}`,
   },
   {
-    name: "StreamHub",
-    movie: (id: string) => `https://player.autoembed.cc/embed/movie/${id}`,
+    name: "VidsrcPro",
+    movie: (id: string) => `https://vidsrc.pro/embed/movie/${id}`,
     tv: (id: string, s?: number, e?: number) =>
-      `https://player.autoembed.cc/embed/tv/${id}/${s ?? 1}/${e ?? 1}`,
+      `https://vidsrc.pro/embed/tv/${id}/${s ?? 1}/${e ?? 1}`,
   },
   {
     name: "MultiStream",
@@ -264,7 +264,6 @@ const Watch = () => {
                 className="absolute inset-0 h-full w-full border-0"
                 allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
                 allowFullScreen
-                sandbox="allow-scripts allow-same-origin allow-forms"
                 referrerPolicy="origin"
                 onLoad={() => setLoading(false)}
               />
