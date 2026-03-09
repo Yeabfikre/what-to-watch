@@ -23,16 +23,16 @@ import {
 
 const PROVIDERS = [
   {
-    name: "UpCloud",
-    movie: (id: string) => `https://vidsrc.icu/embed/movie/${id}`,
-    tv: (id: string, s?: number, e?: number) =>
-      `https://vidsrc.icu/embed/tv/${id}/${s ?? 1}/${e ?? 1}`,
-  },
-  {
     name: "MegaCloud",
     movie: (id: string) => `https://vidsrc.cc/v2/embed/movie/${id}`,
     tv: (id: string, s?: number, e?: number) =>
       `https://vidsrc.cc/v2/embed/tv/${id}/${s ?? 1}/${e ?? 1}`,
+  },
+  {
+    name: "UpCloud",
+    movie: (id: string) => `https://vidsrc.icu/embed/movie/${id}`,
+    tv: (id: string, s?: number, e?: number) =>
+      `https://vidsrc.icu/embed/tv/${id}/${s ?? 1}/${e ?? 1}`,
   },
   {
     name: "StreamHub",
