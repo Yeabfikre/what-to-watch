@@ -1,7 +1,7 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Loader2, Play, Star, Tv, ChevronDown, Check, Link } from "lucide-react";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -93,6 +93,30 @@ const Watch = () => {
   const [showTrailer, setShowTrailer] = useState(false);
   const [selectedSeason, setSelectedSeason] = useState(1);
   const [selectedEpisode, setSelectedEpisode] = useState(1);
+  const [isAdBlockEnabled, setIsAdBlockEnabled] = useState<boolean | null>(null);
+
+  // Detect Adblocker
+  useEffect(() => {
+    const detectAdBlock = () => {
+      try {
+        const testAd = document.createElement("div");
+        testAd.innerHTML = "&nbsp;";
+        testAd.className = "adsbox";
+        document.body.appendChild(testAd);
+        window.setTimeout(() => {
+          if (testAd.offsetHeight === 0) {
+            setIsAdBlockEnabled(true);
+          } else {
+            setIsAdBlockEnabled(false);
+          }
+          testAd.remove();
+        }, 100);
+      } catch {
+        setIsAdBlockEnabled(true);
+      }
+    };
+    detectAdBlock();
+  }, []);
 
   // Fetch details
   const { data: details } = useQuery({
@@ -255,6 +279,36 @@ const Watch = () => {
       {/* Video player */}
       <div className="border-b border-border bg-card px-4 py-4 sm:px-6">
         <div className="mx-auto max-w-5xl">
+
+          {/* Ad Mitigation Banners */}
+          {!PROVIDERS[providerIdx].sandbox && (
+            <div className="mb-4 space-y-3">
+              {isAdBlockEnabled === false && (
+                <div className="flex items-start gap-3 rounded-lg border border-orange-500/50 bg-orange-500/10 p-4 text-orange-200">
+                  <div className="mt-0.5 shrink-0">
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-orange-100">Ad-Blocker Recommended</h4>
+                    <p className="mt-1 text-sm opacity-90 leading-relaxed">
+                      This backup server contains aggressive pop-up ads. For the best experience, we highly recommend installing the free <a href="https://ublockorigin.com/" target="_blank" rel="noopener noreferrer" className="font-bold underline hover:text-orange-50">uBlock Origin</a> browser extension.
+                    </p>
+                  </div>
+                </div>
+              )}
+              <div className="flex items-start sm:items-center gap-3 rounded-lg bg-secondary px-4 py-3 text-sm text-foreground">
+                <svg className="h-5 w-5 shrink-0 text-primary mt-0.5 sm:mt-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p>
+                  <strong>Tip:</strong> The first click on this video player may open a pop-up ad. Close the new tab immediately, then click Play again to start your movie.
+                </p>
+              </div>
+            </div>
+          )}
+
           <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-black">
             {loading && (
               <div className="absolute inset-0 z-10 flex items-center justify-center bg-background">
