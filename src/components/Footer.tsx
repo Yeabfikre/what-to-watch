@@ -49,13 +49,13 @@ const Footer = () => {
               Connect
             </h3>
             <div className="flex gap-4">
-              <a href="#" className="text-muted-foreground transition hover:text-primary">
+              <a href="https://x.com/yabfikre" target="_blank" rel="noopener noreferrer" className="text-muted-foreground transition hover:text-primary">
                 <Twitter className="h-5 w-5" />
               </a>
               <a href="#" className="text-muted-foreground transition hover:text-primary">
                 <Instagram className="h-5 w-5" />
               </a>
-              <a href="#" className="text-muted-foreground transition hover:text-primary">
+              <a href="https://github.com/Yeabfikre/what-to-watch" target="_blank" rel="noopener noreferrer" className="text-muted-foreground transition hover:text-primary">
                 <Github className="h-5 w-5" />
               </a>
             </div>
