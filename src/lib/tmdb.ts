@@ -213,7 +213,7 @@ export function getTrailerUrl(details: TmdbDetails): string | null {
     videos.find((v) => v.type === "Trailer" && v.site === "YouTube" && v.official) ||
     videos.find((v) => v.type === "Trailer" && v.site === "YouTube") ||
     videos.find((v) => v.site === "YouTube");
-  return trailer ? `https://www.youtube.com/watch?v=${trailer.key}` : null;
+  return trailer ? `https://www.youtube.com/embed/${trailer.key}` : null;
 }
 
 // Helper to format runtime
