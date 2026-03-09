@@ -44,14 +44,14 @@ const Navbar = ({ onMovieClick }: NavbarProps) => {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="sticky left-0 right-0 top-0 z-50 flex items-center gap-3 sm:gap-6 backdrop-blur-md px-4 py-3 sm:px-6 sm:py-4 md:px-12 lg:px-16"
+      className="sticky left-0 right-0 top-0 z-50 flex items-center gap-3 md:gap-6 backdrop-blur-md px-4 md:px-6 py-4 lg:px-16"
     >
       <a href="/" className="shrink-0">
-        <h2 className="text-base sm:text-lg font-bold tracking-tight text-foreground drop-shadow-lg">
-          What To Watch
+        <h2 className="text-lg font-bold tracking-tight text-foreground drop-shadow-lg">
+          <span className="hidden md:inline">WTW : </span>What To Watch
         </h2>
       </a>
-      <div className="flex-1 max-w-sm">
+      <div className="w-full md:flex-1 md:max-w-sm">
         <SearchBar onMovieClick={onMovieClick} />
       </div>
       <nav className="hidden md:flex items-center gap-10 lg:gap-16">

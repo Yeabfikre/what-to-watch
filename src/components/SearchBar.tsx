@@ -51,7 +51,7 @@ const SearchBar = ({ onMovieClick }: SearchBarProps) => {
   };
 
   return (
-    <div ref={containerRef} className="relative w-full max-w-md">
+    <div ref={containerRef} className="relative w-full max-w-full md:max-w-md">
       <div className="relative">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <input
@@ -85,9 +85,10 @@ const SearchBar = ({ onMovieClick }: SearchBarProps) => {
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
-            // On mobile, the wrapper might be narrow. Break out by making it absolute to screen width or a fixed max width centered if needed.
-            // Using a fixed w-[90vw] max-w-md left-0 right-0 mx-auto or simply a hard width on small screens.
-            className="absolute top-12 right-0 z-50 w-[90vw] sm:w-[400px] max-w-[400px] overflow-hidden rounded-xl border border-border bg-card shadow-xl"
+            // On mobile/tablet, the wrapper might be narrow. Break out by making it absolute to screen width or a fixed max width centered if needed.
+            // Using a fixed w-[95vw] max-w-md and centering it with fixed positioning (or negative margins) on small screens.
+            // On md screens, it aligns to right-0 with a fixed w-[400px].
+            className="fixed left-2 right-2 top-20 z-50 overflow-hidden rounded-xl border border-border bg-card shadow-xl md:absolute md:left-auto md:right-0 md:top-12 md:w-[400px] md:max-w-[400px]"
           >
             {isFetching ? (
               <div className="px-4 py-6 text-center text-sm text-muted-foreground">
