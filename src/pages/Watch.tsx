@@ -24,24 +24,28 @@ import {
 const PROVIDERS = [
   {
     name: "MegaCloud",
+    sandbox: true,
     movie: (id: string) => `https://vidsrc.cc/v2/embed/movie/${id}`,
     tv: (id: string, s?: number, e?: number) =>
       `https://vidsrc.cc/v2/embed/tv/${id}/${s ?? 1}/${e ?? 1}`,
   },
   {
     name: "VidLink",
+    sandbox: false,
     movie: (id: string) => `https://vidlink.pro/movie/${id}`,
     tv: (id: string, s?: number, e?: number) =>
       `https://vidlink.pro/tv/${id}/${s ?? 1}/${e ?? 1}`,
   },
   {
     name: "VidsrcPro",
+    sandbox: false,
     movie: (id: string) => `https://vidsrc.pro/embed/movie/${id}`,
     tv: (id: string, s?: number, e?: number) =>
       `https://vidsrc.pro/embed/tv/${id}/${s ?? 1}/${e ?? 1}`,
   },
   {
     name: "MultiStream",
+    sandbox: false,
     movie: (id: string) => `https://multiembed.mov/?video_id=${id}&tmdb=1`,
     tv: (id: string, s?: number, e?: number) =>
       `https://multiembed.mov/?video_id=${id}&tmdb=1${s ? `&s=${s}` : ""}${e ? `&e=${e}` : ""}`,
@@ -264,6 +268,7 @@ const Watch = () => {
                 className="absolute inset-0 h-full w-full border-0"
                 allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
                 allowFullScreen
+                {...(PROVIDERS[providerIdx].sandbox ? { sandbox: "allow-scripts allow-same-origin allow-forms allow-presentation" } : {})}
                 referrerPolicy="origin"
                 onLoad={() => setLoading(false)}
               />
