@@ -23,22 +23,22 @@ import {
 
 const PROVIDERS = [
   {
-    name: "VidSrc",
-    movie: (id: string) => `https://vidsrc.to/embed/movie/${id}`,
+    name: "UpCloud",
+    movie: (id: string) => `https://vidsrc.icu/embed/movie/${id}`,
     tv: (id: string, s?: number, e?: number) =>
-      `https://vidsrc.to/embed/tv/${id}${s ? `/${s}` : ""}${e ? `/${e}` : ""}`,
+      `https://vidsrc.icu/embed/tv/${id}/${s ?? 1}/${e ?? 1}`,
   },
   {
-    name: "2Embed",
-    movie: (id: string) => `https://www.2embed.cc/embed/${id}`,
+    name: "MegaCloud",
+    movie: (id: string) => `https://vidsrc.cc/v2/embed/movie/${id}`,
     tv: (id: string, s?: number, e?: number) =>
-      `https://www.2embed.cc/embedtv/${id}&s=${s ?? 1}&e=${e ?? 1}`,
+      `https://vidsrc.cc/v2/embed/tv/${id}/${s ?? 1}/${e ?? 1}`,
   },
   {
-    name: "NetStream",
-    movie: (id: string) => `https://vidsrc.net/embed/movie/${id}`,
+    name: "StreamHub",
+    movie: (id: string) => `https://player.autoembed.cc/embed/movie/${id}`,
     tv: (id: string, s?: number, e?: number) =>
-      `https://vidsrc.net/embed/tv/${id}${s ? `/${s}` : ""}${e ? `/${e}` : ""}`,
+      `https://player.autoembed.cc/embed/tv/${id}/${s ?? 1}/${e ?? 1}`,
   },
   {
     name: "MultiStream",
