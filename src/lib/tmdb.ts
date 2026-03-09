@@ -210,9 +210,14 @@ export async function fetchImages(id: number, type: "movie" | "tv") {
 export function getTrailerUrl(details: TmdbDetails): string | null {
   const videos = details.videos?.results || [];
   const trailer =
+    // Best: official YouTube Trailer
     videos.find((v) => v.type === "Trailer" && v.site === "YouTube" && v.official) ||
+    // Good: any YouTube Trailer
     videos.find((v) => v.type === "Trailer" && v.site === "YouTube") ||
-    videos.find((v) => v.site === "YouTube");
+    // OK: official YouTube Teaser
+    videos.find((v) => v.type === "Teaser" && v.site === "YouTube" && v.official) ||
+    // Fallback: any YouTube Teaser
+    videos.find((v) => v.type === "Teaser" && v.site === "YouTube");
   return trailer ? `https://www.youtube.com/embed/${trailer.key}` : null;
 }
 

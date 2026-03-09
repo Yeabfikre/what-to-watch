@@ -23,22 +23,22 @@ import {
 
 const PROVIDERS = [
   {
-    name: "UpCloud",
-    movie: (id: string) => `https://vidsrc.icu/embed/movie/${id}`,
+    name: "VidSrc",
+    movie: (id: string) => `https://vidsrc.to/embed/movie/${id}`,
     tv: (id: string, s?: number, e?: number) =>
-      `https://vidsrc.icu/embed/tv/${id}${s ? `/${s}` : ""}${e ? `/${e}` : ""}`,
+      `https://vidsrc.to/embed/tv/${id}${s ? `/${s}` : ""}${e ? `/${e}` : ""}`,
   },
   {
-    name: "MegaCloud",
-    movie: (id: string) => `https://vidsrc.cc/v2/embed/movie/${id}`,
+    name: "2Embed",
+    movie: (id: string) => `https://www.2embed.cc/embed/${id}`,
     tv: (id: string, s?: number, e?: number) =>
-      `https://vidsrc.cc/v2/embed/tv/${id}${s ? `/${s}` : ""}${e ? `/${e}` : ""}`,
+      `https://www.2embed.cc/embedtv/${id}&s=${s ?? 1}&e=${e ?? 1}`,
   },
   {
-    name: "StreamHub",
-    movie: (id: string) => `https://player.autoembed.cc/embed/movie/${id}`,
+    name: "NetStream",
+    movie: (id: string) => `https://vidsrc.net/embed/movie/${id}`,
     tv: (id: string, s?: number, e?: number) =>
-      `https://player.autoembed.cc/embed/tv/${id}${s ? `/${s}` : ""}${e ? `/${e}` : ""}`,
+      `https://vidsrc.net/embed/tv/${id}${s ? `/${s}` : ""}${e ? `/${e}` : ""}`,
   },
   {
     name: "MultiStream",
@@ -394,15 +394,16 @@ const Watch = () => {
             <DialogTitle className="sr-only">Trailer</DialogTitle>
             <div className="aspect-video w-full">
               <iframe
-                src={`https://www.youtube.com/embed/${details.videos?.results?.find(v => v.site === "YouTube")?.key}?autoplay=1`}
+                src={`${getTrailerUrl(details)}?autoplay=1&rel=0&playsinline=1&enablejsapi=1`}
                 className="h-full w-full border-0"
-                allow="autoplay; fullscreen; encrypted-media"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
               />
             </div>
           </DialogContent>
         </Dialog>
       )}
+
     </div>
   );
 };

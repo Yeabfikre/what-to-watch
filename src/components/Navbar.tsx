@@ -10,6 +10,13 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import type { TmdbMovie } from "@/lib/tmdb";
 
 interface NavbarProps {
@@ -93,8 +100,57 @@ const Navbar = ({ onMovieClick }: NavbarProps) => {
           </DropdownMenuContent>
         </DropdownMenu>
       </nav>
-      <div className="ml-auto shrink-0">
+      <div className="ml-auto flex items-center gap-2 shrink-0">
         <ThemeToggle />
+        <Sheet>
+          <SheetTrigger className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-transparent md:hidden">
+            <Menu className="h-5 w-5 text-foreground" />
+            <span className="sr-only">Toggle menu</span>
+          </SheetTrigger>
+          <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+            <SheetHeader>
+              <SheetTitle className="text-left text-lg font-bold">Menu</SheetTitle>
+            </SheetHeader>
+            <div className="mt-8 flex flex-col gap-6">
+              <div className="flex flex-col gap-3">
+                <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                  Navigation
+                </h4>
+                {navLinks.map((link) => (
+                  <a
+                    key={link.path}
+                    href={link.path}
+                    className={`text-lg font-medium transition ${
+                      location.pathname === link.path
+                        ? "text-primary"
+                        : "text-foreground hover:text-primary"
+                    }`}
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+              <div className="flex flex-col gap-3">
+                <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                  Categories
+                </h4>
+                {categoryLinks.map((link) => (
+                  <a
+                    key={link.path}
+                    href={link.path}
+                    className={`text-lg font-medium transition ${
+                      location.pathname === link.path
+                        ? "text-primary"
+                        : "text-foreground hover:text-primary"
+                    }`}
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
     </motion.header>
   );

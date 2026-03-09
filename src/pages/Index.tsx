@@ -285,6 +285,7 @@ const Index = () => {
       <MovieDetailModal
         details={selectedDetails || null}
         onClose={() => setSelectedTmdbId(null)}
+        mediaType={selectedTmdbId?.type}
       />
       <Footer />
     </div>

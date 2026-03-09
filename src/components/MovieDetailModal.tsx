@@ -18,6 +18,7 @@ import {
 interface MovieDetailModalProps {
   details: TmdbDetails | null;
   onClose: () => void;
+  mediaType?: "movie" | "tv";
 }
 
 const RatingBadge = ({ source, value }: { source: string; value: string }) => {
@@ -33,13 +34,14 @@ const RatingBadge = ({ source, value }: { source: string; value: string }) => {
   );
 };
 
-const MovieDetailModal = ({ details, onClose }: MovieDetailModalProps) => {
+const MovieDetailModal = ({ details, onClose, mediaType }: MovieDetailModalProps) => {
   const [imgError, setImgError] = useState(false);
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"overview" | "cast" | "trailer" | "episodes">("overview");
   const [selectedSeason, setSelectedSeason] = useState(1);
 
-  const isTV = !!details?.number_of_seasons;
+  // Use explicit mediaType if provided (more reliable), otherwise fall back to number_of_seasons detection
+  const isTV = mediaType === "tv" || (mediaType !== "movie" && !!details?.number_of_seasons);
 
   const { data: seasonData } = useQuery({
     queryKey: ["tmdb", "season", details?.id, selectedSeason],
@@ -395,10 +397,10 @@ const MovieDetailModal = ({ details, onClose }: MovieDetailModalProps) => {
                   >
                     <div className="aspect-video w-full overflow-hidden rounded-lg">
                       <iframe
-                        src={`${trailerUrl}?autoplay=1&rel=0`}
+                        src={`${trailerUrl}?autoplay=1&rel=0&playsinline=1&enablejsapi=1`}
                         title={`${title} Trailer`}
-                        className="h-full w-full"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        className="h-full w-full border-0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowFullScreen
                       />
                     </div>

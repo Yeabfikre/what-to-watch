@@ -76,8 +76,7 @@ const MovieCard = ({ movie, index, onClick }: MovieCardProps) => {
           ? { width: { type: "spring", stiffness: 400, damping: 30, mass: 0.8 }, delay: 0, duration: 0.3 }
           : { delay: index * 0.03, duration: 0.3 }
       }
-      className="group shrink-0 cursor-pointer"
-      style={{ touchAction: "pan-y" }}
+      className="group shrink-0 cursor-pointer snap-start"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => onClick(movie)}

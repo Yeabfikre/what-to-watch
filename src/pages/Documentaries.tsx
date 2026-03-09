@@ -9,6 +9,7 @@ import MovieDetailModal from "@/components/MovieDetailModal";
 import {
   fetchDiscover,
   fetchDetails,
+  getMediaType,
   type TmdbMovie,
   type DiscoverOptions,
 } from "@/lib/tmdb";
@@ -136,7 +137,8 @@ const Documentaries = () => {
   });
 
   const handleClick = (movie: TmdbMovie) => {
-    setSelectedTmdbId({ id: movie.id, type: movie.first_air_date ? "tv" : "movie" });
+    // Use getMediaType for reliable detection (checks media_type field then first_air_date)
+    setSelectedTmdbId({ id: movie.id, type: getMediaType(movie) });
   };
 
   const categories = ["All", ...Object.keys(DOC_SUBGENRES)];
@@ -174,7 +176,7 @@ const Documentaries = () => {
         ))}
       </main>
 
-      <MovieDetailModal details={selectedDetails || null} onClose={() => setSelectedTmdbId(null)} />
+      <MovieDetailModal details={selectedDetails || null} onClose={() => setSelectedTmdbId(null)} mediaType={selectedTmdbId?.type} />
       <Footer />
     </div>
   );

@@ -85,7 +85,9 @@ const SearchBar = ({ onMovieClick }: SearchBarProps) => {
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
-            className="absolute top-12 z-50 w-full overflow-hidden rounded-xl border border-border bg-card shadow-xl"
+            // On mobile, the wrapper might be narrow. Break out by making it absolute to screen width or a fixed max width centered if needed.
+            // Using a fixed w-[90vw] max-w-md left-0 right-0 mx-auto or simply a hard width on small screens.
+            className="absolute top-12 right-0 z-50 w-[90vw] sm:w-[400px] max-w-[400px] overflow-hidden rounded-xl border border-border bg-card shadow-xl"
           >
             {isFetching ? (
               <div className="px-4 py-6 text-center text-sm text-muted-foreground">

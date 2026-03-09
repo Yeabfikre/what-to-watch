@@ -143,7 +143,7 @@ const Reality = () => {
         ))}
       </main>
 
-      <MovieDetailModal details={selectedDetails || null} onClose={() => setSelectedTmdbId(null)} />
+      <MovieDetailModal details={selectedDetails || null} onClose={() => setSelectedTmdbId(null)} mediaType="tv" />
       <Footer />
     </div>
   );
