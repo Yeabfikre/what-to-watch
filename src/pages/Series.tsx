@@ -1,5 +1,6 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useLocation } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HeroSpotlight from "@/components/HeroSpotlight";
@@ -68,6 +69,7 @@ function ratingToParam(r: string | null): string | undefined {
 }
 
 const Series = () => {
+  const { hash } = useLocation();
   const [selectedTmdbId, setSelectedTmdbId] = useState<{ id: number; type: "movie" | "tv" } | null>(null);
   const [filters, setFilters] = useState<FilterValues>({ genre: null, year: null, rating: null, quality: null, sort: "Popularity" });
 
@@ -146,6 +148,20 @@ const Series = () => {
         { title: "Popular Series", movies: popular },
         { title: "Top Rated", movies: topRated },
       ];
+
+  useEffect(() => {
+    if (hash && sections.length > 0) {
+      // Remove the leading '#'
+      const id = hash.replace("#", "");
+      const element = document.getElementById(id);
+      if (element) {
+        // Small delay to ensure the DOM has updated
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
+      }
+    }
+  }, [hash, sections]);
 
   return (
     <div className="min-h-screen bg-background transition-colors">

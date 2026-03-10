@@ -40,7 +40,7 @@ const MovieRow = ({ title, movies, onMovieClick }: MovieRowProps) => {
   if (movies.length === 0) return null;
 
   return (
-    <section className="relative">
+    <section id={title.toLowerCase().replace(/\s+/g, '-')} className="relative">
       <h2 className="mb-3 text-xl font-bold text-foreground">{title}</h2>
 
       <div className="group/row relative" onWheel={handleWheel}>
