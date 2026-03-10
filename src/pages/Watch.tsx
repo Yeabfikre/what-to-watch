@@ -30,6 +30,13 @@ const PROVIDERS = [
       `https://vidsrc.cc/v2/embed/tv/${id}/${s ?? 1}/${e ?? 1}`,
   },
   {
+    name: "MultiStream",
+    sandbox: false,
+    movie: (id: string) => `https://multiembed.mov/?video_id=${id}&tmdb=1`,
+    tv: (id: string, s?: number, e?: number) =>
+      `https://multiembed.mov/?video_id=${id}&tmdb=1${s ? `&s=${s}` : ""}${e ? `&e=${e}` : ""}`,
+  },
+  {
     name: "VidLink",
     sandbox: false,
     movie: (id: string) => `https://vidlink.pro/movie/${id}`,
@@ -42,13 +49,6 @@ const PROVIDERS = [
     movie: (id: string) => `https://vidsrc.pro/embed/movie/${id}`,
     tv: (id: string, s?: number, e?: number) =>
       `https://vidsrc.pro/embed/tv/${id}/${s ?? 1}/${e ?? 1}`,
-  },
-  {
-    name: "MultiStream",
-    sandbox: false,
-    movie: (id: string) => `https://multiembed.mov/?video_id=${id}&tmdb=1`,
-    tv: (id: string, s?: number, e?: number) =>
-      `https://multiembed.mov/?video_id=${id}&tmdb=1${s ? `&s=${s}` : ""}${e ? `&e=${e}` : ""}`,
   },
 ];
 
