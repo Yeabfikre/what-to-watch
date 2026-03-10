@@ -70,15 +70,9 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-10 border-t border-border pt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-between text-xs text-muted-foreground">
+        <div className="mt-10 border-t border-border pt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-center text-xs text-muted-foreground">
           <div>
             © {new Date().getFullYear()} WTW : What To Watch. All rights reserved.
-          </div>
-          <div className="flex gap-4">
-            <Link to="/terms" className="transition hover:text-primary">Terms of service</Link>
-            <Link to="/contact" className="transition hover:text-primary">Contact</Link>
-            <Link to="/sitemap" className="transition hover:text-primary">Sitemap</Link>
-            <Link to="/faq" className="transition hover:text-primary">FAQ</Link>
           </div>
         </div>
       </div>
