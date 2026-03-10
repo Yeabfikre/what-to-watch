@@ -9,7 +9,8 @@ A sleek, modern movie and TV discovery platform built with React. Browse trendin
 ![Supabase](https://img.shields.io/badge/Supabase-Backend-3FCF8E?logo=supabase)
 
 ---
-
+## Demo Video
+https://github.com/user-attachments/assets/40829536-f694-4fbd-9d0a-898596e20156
 ## ✨ Features
 
 -  **Trending & Popular** : Discover what's hot right now across movies and TV
