@@ -51,9 +51,9 @@ const Footer = () => {
             </h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link to="/news" className="transition hover:text-primary">News</Link></li>
-              <li><Link to="/series" className="transition hover:text-primary">On the Air</Link></li>
-              <li><Link to="/series" className="transition hover:text-primary">Popular Series</Link></li>
-              <li><Link to="/series" className="transition hover:text-primary">Top Rated</Link></li>
+              <li><Link to="/series#on-the-air" className="transition hover:text-primary">On the Air</Link></li>
+              <li><Link to="/series#popular-series" className="transition hover:text-primary">Popular Series</Link></li>
+              <li><Link to="/series#top-rated" className="transition hover:text-primary">Top Rated</Link></li>
             </ul>
           </div>
 
