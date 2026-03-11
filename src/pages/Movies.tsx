@@ -47,6 +47,17 @@ const MOVIE_GENRES: Record<string, string> = {
   Western: "37",
 };
 
+const COUNTRY_MAP: Record<string, string> = {
+  Argentina: "AR", Australia: "AU", Austria: "AT", Belgium: "BE", Brazil: "BR",
+  Canada: "CA", China: "CN", "Czech Republic": "CZ", Denmark: "DK", Finland: "FI",
+  France: "FR", Germany: "DE", "Hong Kong": "HK", Hungary: "HU", India: "IN",
+  Ireland: "IE", Israel: "IL", Italy: "IT", Japan: "JP", Luxembourg: "LU",
+  Mexico: "MX", Netherlands: "NL", "New Zealand": "NZ", Norway: "NO", Poland: "PL",
+  Romania: "RO", Russia: "RU", "South Africa": "ZA", "South Korea": "KR",
+  Spain: "ES", Sweden: "SE", Switzerland: "CH", Taiwan: "TW", Thailand: "TH",
+  "United Kingdom": "GB", "United States of America": "US"
+};
+
 const SORT_MAP: Record<string, string> = {
   Popularity: "popularity.desc",
   Rating: "vote_average.desc",
@@ -69,10 +80,10 @@ function ratingToParam(r: string | null): string | undefined {
 
 const Movies = () => {
   const [selectedTmdbId, setSelectedTmdbId] = useState<{ id: number; type: "movie" | "tv" } | null>(null);
-  const [filters, setFilters] = useState<FilterValues>({ genre: null, year: null, rating: null, quality: null, sort: "Popularity" });
+  const [filters, setFilters] = useState<FilterValues>({ genre: null, country: null, year: null, rating: null, quality: null, sort: "Popularity" });
 
   const hasActiveFilters = !!(
-    (filters.genre && filters.genre !== "All") || filters.year || filters.rating || filters.sort !== "Popularity"
+    (filters.genre && filters.genre !== "All") || filters.country || filters.year || filters.rating || filters.sort !== "Popularity"
   );
 
   const { data: popular = [] } = useQuery({
@@ -99,8 +110,8 @@ const Movies = () => {
   });
 
   const filterQueryKey = useMemo(
-    () => ["tmdb", "movies-filtered", filters.genre, filters.year, filters.rating, filters.sort],
-    [filters.genre, filters.year, filters.rating, filters.sort],
+    () => ["tmdb", "movies-filtered", filters.genre, filters.country, filters.year, filters.rating, filters.sort],
+    [filters.genre, filters.country, filters.year, filters.rating, filters.sort],
   );
 
   const { data: filteredResults = [] } = useQuery({
@@ -112,6 +123,7 @@ const Movies = () => {
         genreId,
         sortBy: SORT_MAP[filters.sort],
         voteAverageGte: ratingToParam(filters.rating),
+        withOriginCountry: filters.country ? COUNTRY_MAP[filters.country] : undefined,
         ...yearToParams(filters.year),
       });
     },
@@ -133,6 +145,7 @@ const Movies = () => {
   const filterLabel = useMemo(() => {
     const parts: string[] = [];
     if (filters.genre && filters.genre !== "All") parts.push(filters.genre);
+    if (filters.country) parts.push(filters.country);
     if (filters.year) parts.push(filters.year);
     if (filters.rating) parts.push(`Rated ${filters.rating}`);
     if (filters.sort !== "Popularity") parts.push(`Sorted by ${filters.sort}`);

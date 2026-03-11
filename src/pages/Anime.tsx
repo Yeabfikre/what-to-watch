@@ -53,7 +53,7 @@ function ratingToParam(r: string | null): string | undefined {
 
 const Anime = () => {
   const [selectedTmdbId, setSelectedTmdbId] = useState<{ id: number; type: "movie" | "tv" } | null>(null);
-  const [filters, setFilters] = useState<FilterValues>({ genre: null, year: null, rating: null, quality: null, sort: "Popularity" });
+  const [filters, setFilters] = useState<FilterValues>({ genre: null, country: null, year: null, rating: null, quality: null, sort: "Popularity" });
 
   const hasActiveFilters = !!(
     (filters.genre && filters.genre !== "All") || filters.year || filters.rating || filters.sort !== "Popularity"
