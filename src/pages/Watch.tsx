@@ -284,16 +284,16 @@ const Watch = () => {
           {!PROVIDERS[providerIdx].sandbox && (
             <div className="mb-4 space-y-3">
               {isAdBlockEnabled === false && (
-                <div className="flex items-start gap-3 rounded-lg border border-orange-500/50 bg-orange-500/10 p-4 text-orange-200">
+                <div className="flex items-start gap-3 rounded-lg border border-amber-600 bg-amber-100 p-4 text-amber-900 dark:border-amber-500/50 dark:bg-amber-500/10 dark:text-amber-200">
                   <div className="mt-0.5 shrink-0">
-                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="h-5 w-5 text-amber-600 dark:text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-orange-100">Ad-Blocker Recommended</h4>
-                    <p className="mt-1 text-sm opacity-90 leading-relaxed">
-                      This backup server contains aggressive pop-up ads. For the best experience, we highly recommend installing the free <a href="https://ublockorigin.com/" target="_blank" rel="noopener noreferrer" className="font-bold underline hover:text-orange-50">uBlock Origin</a> browser extension.
+                    <h4 className="font-semibold text-amber-800 dark:text-amber-100">Ad-Blocker Recommended</h4>
+                    <p className="mt-1 text-sm leading-relaxed text-amber-700 dark:text-amber-200/90">
+                      This backup server contains aggressive pop-up ads. For the best experience, we highly recommend installing the free <a href="https://ublockorigin.com/" target="_blank" rel="noopener noreferrer" className="font-bold underline text-amber-900 hover:text-amber-600 dark:text-amber-100 dark:hover:text-amber-50">uBlock Origin</a> browser extension.
                     </p>
                   </div>
                 </div>
