@@ -4,6 +4,7 @@ import { useState } from "react";
 
 export interface FilterValues {
   genre: string | null;
+  country: string | null;
   year: string | null;
   rating: string | null;
   quality: string | null;
@@ -21,23 +22,33 @@ const YEAR_OPTIONS = ["2026", "2025", "2024", "2023", "2022", "2021", "2020", "2
 const RATING_OPTIONS = ["9+", "8+", "7+", "6+", "5+"];
 const SORT_OPTIONS = ["Popularity", "Rating", "Release Date", "Title A-Z"];
 
+const COUNTRY_OPTIONS = [
+  "Argentina", "Australia", "Austria", "Belgium", "Brazil", "Canada", "China", 
+  "Czech Republic", "Denmark", "Finland", "France", "Germany", "Hong Kong", 
+  "Hungary", "India", "Ireland", "Israel", "Italy", "Japan", "Luxembourg", 
+  "Mexico", "Netherlands", "New Zealand", "Norway", "Poland", "Romania", 
+  "Russia", "South Africa", "South Korea", "Spain", "Sweden", "Switzerland", 
+  "Taiwan", "Thailand", "United Kingdom", "United States of America"
+];
+
 const FilterBar = ({ categories, filters, onFiltersChange }: FilterBarProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const { genre, year, rating, quality, sort } = filters;
+  const { genre, country, year, rating, quality, sort } = filters;
 
   const update = (patch: Partial<FilterValues>) =>
     onFiltersChange({ ...filters, ...patch });
 
   const activeCount =
     (genre && genre !== "All" ? 1 : 0) +
+    (country ? 1 : 0) +
     (year ? 1 : 0) +
     (rating ? 1 : 0) +
     (quality && quality !== "All" ? 1 : 0) +
     (sort !== "Popularity" ? 1 : 0);
 
   const clearAll = () =>
-    onFiltersChange({ genre: null, year: null, rating: null, quality: null, sort: "Popularity" });
+    onFiltersChange({ genre: null, country: null, year: null, rating: null, quality: null, sort: "Popularity" });
 
   return (
     <div className="rounded-xl border border-border/40 bg-card/60 backdrop-blur-md">
@@ -112,6 +123,20 @@ const FilterBar = ({ categories, filters, onFiltersChange }: FilterBarProps) => 
                 </div>
               </FilterSection>
 
+              {/* Country */}
+              <FilterSection label="Country">
+                <div className="flex flex-wrap gap-2">
+                  {COUNTRY_OPTIONS.map((c) => (
+                    <Chip
+                      key={c}
+                      label={c}
+                      active={country === c}
+                      onClick={() => update({ country: country === c ? null : c })}
+                    />
+                  ))}
+                </div>
+              </FilterSection>
+
               {/* Year */}
               <FilterSection label="Year">
                 <div className="flex flex-wrap gap-2">
@@ -162,6 +187,9 @@ const FilterBar = ({ categories, filters, onFiltersChange }: FilterBarProps) => 
                 <span className="text-xs font-medium text-muted-foreground">Active:</span>
                 {genre && genre !== "All" && (
                   <ActiveTag label={genre} onRemove={() => update({ genre: null })} />
+                )}
+                {country && (
+                  <ActiveTag label={country} onRemove={() => update({ country: null })} />
                 )}
                 {year && (
                   <ActiveTag label={year} onRemove={() => update({ year: null })} />

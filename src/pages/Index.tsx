@@ -31,6 +31,40 @@ const GENRE_FILTER_MAP: Record<string, { type: "movie" | "tv"; genreId?: string;
   Dramas: { type: "movie", genreId: "18" },
   Horror: { type: "movie", genreId: "27" },
   Adventure: { type: "movie", genreId: "12" },
+  "Action & Adventure": { type: "tv", genreId: "10759" },
+  Animation: { type: "movie", genreId: "16" },
+  Biography: { type: "movie", genreId: "99" },
+  Comedy: { type: "movie", genreId: "35" },
+  Crime: { type: "movie", genreId: "80" },
+  Documentary: { type: "movie", genreId: "99" },
+  Drama: { type: "movie", genreId: "18" },
+  Fantasy: { type: "movie", genreId: "14" },
+  History: { type: "movie", genreId: "36" },
+  Kids: { type: "tv", genreId: "10762" },
+  Music: { type: "movie", genreId: "10402" },
+  Mystery: { type: "movie", genreId: "9648" },
+  News: { type: "tv", genreId: "10763" },
+  Reality: { type: "tv", genreId: "10764" },
+  "Sci-Fi & Fantasy": { type: "tv", genreId: "10765" },
+  "Science Fiction": { type: "movie", genreId: "878" },
+  Soap: { type: "tv", genreId: "10766" },
+  Talk: { type: "tv", genreId: "10767" },
+  Thriller: { type: "movie", genreId: "53" },
+  "TV Movie": { type: "movie", genreId: "10770" },
+  War: { type: "movie", genreId: "10752" },
+  "War & Politics": { type: "tv", genreId: "10768" },
+  Western: { type: "movie", genreId: "37" },
+};
+
+const COUNTRY_MAP: Record<string, string> = {
+  Argentina: "AR", Australia: "AU", Austria: "AT", Belgium: "BE", Brazil: "BR",
+  Canada: "CA", China: "CN", "Czech Republic": "CZ", Denmark: "DK", Finland: "FI",
+  France: "FR", Germany: "DE", "Hong Kong": "HK", Hungary: "HU", India: "IN",
+  Ireland: "IE", Israel: "IL", Italy: "IT", Japan: "JP", Luxembourg: "LU",
+  Mexico: "MX", Netherlands: "NL", "New Zealand": "NZ", Norway: "NO", Poland: "PL",
+  Romania: "RO", Russia: "RU", "South Africa": "ZA", "South Korea": "KR",
+  Spain: "ES", Sweden: "SE", Switzerland: "CH", Taiwan: "TW", Thailand: "TH",
+  "United Kingdom": "GB", "United States of America": "US"
 };
 
 const SORT_MAP: Record<string, string> = {
@@ -55,14 +89,22 @@ function ratingToParam(rating: string | null): string | undefined {
 }
 
 const categories = [
-  "All", "Sci-fi", "New", "Romance", "Doomsday", "Paramount",
-  "Family", "Action", "Comedies", "Dramas", "Horror", "Adventure",
+  "All",
+  // Defaults & Specials
+  "New", "Paramount", "Doomsday",
+  // Standard Genres
+  "Action", "Action & Adventure", "Adventure", "Animation", "Biography",
+  "Comedies", "Comedy", "Crime", "Documentary", "Dramas", "Drama", "Family",
+  "Fantasy", "History", "Horror", "Kids", "Music", "Mystery", "News",
+  "Reality", "Romance", "Sci-fi", "Sci-Fi & Fantasy", "Science Fiction",
+  "Soap", "Talk", "Thriller", "TV Movie", "War", "War & Politics", "Western"
 ];
 
 const Index = () => {
   const [selectedTmdbId, setSelectedTmdbId] = useState<{ id: number; type: "movie" | "tv" } | null>(null);
   const [filters, setFilters] = useState<FilterValues>({
     genre: null,
+    country: null,
     year: null,
     rating: null,
     quality: null,
@@ -71,6 +113,7 @@ const Index = () => {
 
   const hasActiveFilters = !!(
     (filters.genre && filters.genre !== "All") ||
+    filters.country ||
     filters.year ||
     filters.rating ||
     filters.sort !== "Popularity"
@@ -196,8 +239,8 @@ const Index = () => {
 
   // --- Filtered query ---
   const filterQueryKey = useMemo(
-    () => ["tmdb", "filtered", filters.genre, filters.year, filters.rating, filters.sort],
-    [filters.genre, filters.year, filters.rating, filters.sort],
+    () => ["tmdb", "filtered", filters.genre, filters.country, filters.year, filters.rating, filters.sort],
+    [filters.genre, filters.country, filters.year, filters.rating, filters.sort],
   );
 
   const { data: filteredResults = [] } = useQuery({
@@ -213,6 +256,7 @@ const Index = () => {
           companyId: "4",
           sortBy: SORT_MAP[filters.sort],
           voteAverageGte: ratingToParam(filters.rating),
+          withOriginCountry: filters.country ? COUNTRY_MAP[filters.country] : undefined,
           ...yearToParams(filters.year),
         });
       }
@@ -222,6 +266,7 @@ const Index = () => {
         genreId: genreConfig?.genreId,
         sortBy: SORT_MAP[filters.sort],
         voteAverageGte: ratingToParam(filters.rating),
+        withOriginCountry: filters.country ? COUNTRY_MAP[filters.country] : undefined,
         ...yearToParams(filters.year),
       });
     },
@@ -242,6 +287,7 @@ const Index = () => {
   const filterLabel = useMemo(() => {
     const parts: string[] = [];
     if (filters.genre && filters.genre !== "All") parts.push(filters.genre);
+    if (filters.country) parts.push(filters.country);
     if (filters.year) parts.push(filters.year);
     if (filters.rating) parts.push(`Rated ${filters.rating}`);
     if (filters.sort !== "Popularity") parts.push(`Sorted by ${filters.sort}`);
