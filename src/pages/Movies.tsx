@@ -6,12 +6,14 @@ import HeroSpotlight from "@/components/HeroSpotlight";
 import FilterBar, { type FilterValues } from "@/components/FilterBar";
 import MovieRow from "@/components/MovieRow";
 import MovieDetailModal from "@/components/MovieDetailModal";
+import { useInfiniteRow } from "@/hooks/useInfiniteRow";
 import {
   fetchPopular,
-  fetchTopRated,
-  fetchNowPlaying,
-  fetchDiscover,
   fetchDetails,
+  fetchDiscover,
+  fetchPopularPaged,
+  fetchTopRatedPaged,
+  fetchNowPlayingPaged,
   type TmdbMovie,
   type DiscoverOptions,
 } from "@/lib/tmdb";
@@ -86,21 +88,22 @@ const Movies = () => {
     (filters.genre && filters.genre !== "All") || filters.country || filters.year || filters.rating || filters.sort !== "Popularity"
   );
 
-  const { data: popular = [] } = useQuery({
-    queryKey: ["tmdb", "popular", "movie"],
-    queryFn: () => fetchPopular("movie"),
+  // Infinite scrolling rows
+  const nowPlaying = useInfiniteRow({
+    queryKey: ["tmdb", "nowPlaying", "movies", "infinite"],
+    fetchFn: (page) => fetchNowPlayingPaged(page),
     enabled: !hasActiveFilters,
   });
 
-  const { data: topRated = [] } = useQuery({
-    queryKey: ["tmdb", "topRated", "movie"],
-    queryFn: () => fetchTopRated("movie"),
+  const popular = useInfiniteRow({
+    queryKey: ["tmdb", "popular", "movie", "infinite"],
+    fetchFn: (page) => fetchPopularPaged("movie", page),
     enabled: !hasActiveFilters,
   });
 
-  const { data: nowPlaying = [] } = useQuery({
-    queryKey: ["tmdb", "nowPlaying"],
-    queryFn: () => fetchNowPlaying(),
+  const topRatedRow = useInfiniteRow({
+    queryKey: ["tmdb", "topRated", "movie", "infinite"],
+    fetchFn: (page) => fetchTopRatedPaged("movie", page),
     enabled: !hasActiveFilters,
   });
 
@@ -152,13 +155,11 @@ const Movies = () => {
     return parts.length > 0 ? parts.join(" · ") : "Results";
   }, [filters]);
 
-  const sections = hasActiveFilters
-    ? [{ title: filterLabel, movies: filteredResults }]
-    : [
-        { title: "Now Playing", movies: nowPlaying },
-        { title: "Popular Movies", movies: popular },
-        { title: "Top Rated", movies: topRated },
-      ];
+  const infiniteRows = [
+    { title: "Now Playing", ...nowPlaying },
+    { title: "Popular Movies", ...popular },
+    { title: "Top Rated", ...topRatedRow },
+  ];
 
   return (
     <div className="min-h-screen bg-background transition-colors">
@@ -170,9 +171,21 @@ const Movies = () => {
       </div>
 
       <main className="flex flex-col gap-8 px-6 pb-16 md:px-12 lg:px-16">
-        {sections.map((section) => (
-          <MovieRow key={section.title} title={section.title} movies={section.movies} onMovieClick={handleMovieClick} />
-        ))}
+        {hasActiveFilters ? (
+          <MovieRow title={filterLabel} movies={filteredResults} onMovieClick={handleMovieClick} />
+        ) : (
+          infiniteRows.map((row) => (
+            <MovieRow
+              key={row.title}
+              title={row.title}
+              movies={row.movies}
+              onMovieClick={handleMovieClick}
+              fetchNextPage={row.fetchNextPage}
+              hasNextPage={row.hasNextPage}
+              isFetchingNextPage={row.isFetchingNextPage}
+            />
+          ))
+        )}
       </main>
 
       <MovieDetailModal details={selectedDetails || null} onClose={() => setSelectedTmdbId(null)} mediaType={selectedTmdbId?.type} />

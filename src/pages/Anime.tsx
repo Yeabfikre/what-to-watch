@@ -6,9 +6,11 @@ import HeroSpotlight from "@/components/HeroSpotlight";
 import FilterBar, { type FilterValues } from "@/components/FilterBar";
 import MovieRow from "@/components/MovieRow";
 import MovieDetailModal from "@/components/MovieDetailModal";
+import { useInfiniteRow } from "@/hooks/useInfiniteRow";
 import {
   fetchDiscover,
   fetchDetails,
+  fetchDiscoverPaged,
   type TmdbMovie,
   type DiscoverOptions,
 } from "@/lib/tmdb";
@@ -59,22 +61,22 @@ const Anime = () => {
     (filters.genre && filters.genre !== "All") || filters.year || filters.rating || filters.sort !== "Popularity"
   );
 
-  // Default rows
-  const { data: popularAnime = [] } = useQuery({
-    queryKey: ["tmdb", "anime", "popular"],
-    queryFn: () => fetchDiscover({ ...ANIME_BASE, type: "tv", sortBy: "popularity.desc" }),
+  // Infinite scrolling rows
+  const popularAnime = useInfiniteRow({
+    queryKey: ["tmdb", "anime", "popular", "infinite"],
+    fetchFn: (page) => fetchDiscoverPaged({ ...ANIME_BASE, type: "tv", sortBy: "popularity.desc" }, page),
     enabled: !hasActiveFilters,
   });
 
-  const { data: topRatedAnime = [] } = useQuery({
-    queryKey: ["tmdb", "anime", "top_rated"],
-    queryFn: () => fetchDiscover({ ...ANIME_BASE, type: "tv", sortBy: "vote_average.desc", voteAverageGte: "7" }),
+  const topRatedAnime = useInfiniteRow({
+    queryKey: ["tmdb", "anime", "top_rated", "infinite"],
+    fetchFn: (page) => fetchDiscoverPaged({ ...ANIME_BASE, type: "tv", sortBy: "vote_average.desc", voteAverageGte: "7" }, page),
     enabled: !hasActiveFilters,
   });
 
-  const { data: animeMovies = [] } = useQuery({
-    queryKey: ["tmdb", "anime", "movies"],
-    queryFn: () => fetchDiscover({ type: "movie", genreId: "16", withOriginalLanguage: "ja", withOriginCountry: "JP", sortBy: "popularity.desc" }),
+  const animeMovies = useInfiniteRow({
+    queryKey: ["tmdb", "anime", "movies", "infinite"],
+    fetchFn: (page) => fetchDiscoverPaged({ type: "movie", genreId: "16", withOriginalLanguage: "ja", withOriginCountry: "JP", sortBy: "popularity.desc" }, page),
     enabled: !hasActiveFilters,
   });
 
@@ -130,13 +132,11 @@ const Anime = () => {
     return parts.length > 0 ? parts.join(" · ") : "Results";
   }, [filters]);
 
-  const sections = hasActiveFilters
-    ? [{ title: filterLabel, movies: filteredResults }]
-    : [
-        { title: "Popular Anime", movies: popularAnime },
-        { title: "Top Rated Anime", movies: topRatedAnime },
-        { title: "Anime Movies", movies: animeMovies },
-      ];
+  const infiniteRows = [
+    { title: "Popular Anime", ...popularAnime },
+    { title: "Top Rated Anime", ...topRatedAnime },
+    { title: "Anime Movies", ...animeMovies },
+  ];
 
   return (
     <div className="min-h-screen bg-background transition-colors">
@@ -148,9 +148,21 @@ const Anime = () => {
       </div>
 
       <main className="flex flex-col gap-8 px-6 pb-16 md:px-12 lg:px-16">
-        {sections.map((section) => (
-          <MovieRow key={section.title} title={section.title} movies={section.movies} onMovieClick={handleClick} />
-        ))}
+        {hasActiveFilters ? (
+          <MovieRow title={filterLabel} movies={filteredResults} onMovieClick={handleClick} />
+        ) : (
+          infiniteRows.map((row) => (
+            <MovieRow
+              key={row.title}
+              title={row.title}
+              movies={row.movies}
+              onMovieClick={handleClick}
+              fetchNextPage={row.fetchNextPage}
+              hasNextPage={row.hasNextPage}
+              isFetchingNextPage={row.isFetchingNextPage}
+            />
+          ))
+        )}
       </main>
 
       <MovieDetailModal details={selectedDetails || null} onClose={() => setSelectedTmdbId(null)} />

@@ -7,12 +7,14 @@ import HeroSpotlight from "@/components/HeroSpotlight";
 import FilterBar, { type FilterValues } from "@/components/FilterBar";
 import MovieRow from "@/components/MovieRow";
 import MovieDetailModal from "@/components/MovieDetailModal";
+import { useInfiniteRow } from "@/hooks/useInfiniteRow";
 import {
   fetchPopular,
-  fetchTopRated,
-  fetchOnTheAir,
   fetchDiscover,
   fetchDetails,
+  fetchPopularPaged,
+  fetchTopRatedPaged,
+  fetchOnTheAirPaged,
   type TmdbMovie,
   type DiscoverOptions,
 } from "@/lib/tmdb";
@@ -88,21 +90,22 @@ const Series = () => {
     (filters.genre && filters.genre !== "All") || filters.country || filters.year || filters.rating || filters.sort !== "Popularity"
   );
 
-  const { data: popular = [] } = useQuery({
-    queryKey: ["tmdb", "popular", "tv"],
-    queryFn: () => fetchPopular("tv"),
+  // Infinite scrolling rows
+  const onTheAir = useInfiniteRow({
+    queryKey: ["tmdb", "onTheAir", "series", "infinite"],
+    fetchFn: (page) => fetchOnTheAirPaged(page),
     enabled: !hasActiveFilters,
   });
 
-  const { data: topRated = [] } = useQuery({
-    queryKey: ["tmdb", "topRated", "tv"],
-    queryFn: () => fetchTopRated("tv"),
+  const popularRow = useInfiniteRow({
+    queryKey: ["tmdb", "popular", "tv", "series", "infinite"],
+    fetchFn: (page) => fetchPopularPaged("tv", page),
     enabled: !hasActiveFilters,
   });
 
-  const { data: onTheAir = [] } = useQuery({
-    queryKey: ["tmdb", "onTheAir"],
-    queryFn: () => fetchOnTheAir(),
+  const topRatedRow = useInfiniteRow({
+    queryKey: ["tmdb", "topRated", "tv", "series", "infinite"],
+    fetchFn: (page) => fetchTopRatedPaged("tv", page),
     enabled: !hasActiveFilters,
   });
 
@@ -154,27 +157,23 @@ const Series = () => {
     return parts.length > 0 ? parts.join(" · ") : "Results";
   }, [filters]);
 
-  const sections = hasActiveFilters
-    ? [{ title: filterLabel, movies: filteredResults }]
-    : [
-        { title: "On the Air", movies: onTheAir },
-        { title: "Popular Series", movies: popular },
-        { title: "Top Rated", movies: topRated },
-      ];
+  const infiniteRows = [
+    { title: "On the Air", ...onTheAir },
+    { title: "Popular Series", ...popularRow },
+    { title: "Top Rated", ...topRatedRow },
+  ];
 
   useEffect(() => {
-    if (hash && sections.length > 0) {
-      // Remove the leading '#'
+    if (hash && infiniteRows.length > 0) {
       const id = hash.replace("#", "");
       const element = document.getElementById(id);
       if (element) {
-        // Small delay to ensure the DOM has updated
         setTimeout(() => {
           element.scrollIntoView({ behavior: "smooth", block: "start" });
         }, 100);
       }
     }
-  }, [hash, sections]);
+  }, [hash, infiniteRows]);
 
   return (
     <div className="min-h-screen bg-background transition-colors">
@@ -186,9 +185,21 @@ const Series = () => {
       </div>
 
       <main className="flex flex-col gap-8 px-6 pb-16 md:px-12 lg:px-16">
-        {sections.map((section) => (
-          <MovieRow key={section.title} title={section.title} movies={section.movies} onMovieClick={handleSeriesClick} />
-        ))}
+        {hasActiveFilters ? (
+          <MovieRow title={filterLabel} movies={filteredResults} onMovieClick={handleSeriesClick} />
+        ) : (
+          infiniteRows.map((row) => (
+            <MovieRow
+              key={row.title}
+              title={row.title}
+              movies={row.movies}
+              onMovieClick={handleSeriesClick}
+              fetchNextPage={row.fetchNextPage}
+              hasNextPage={row.hasNextPage}
+              isFetchingNextPage={row.isFetchingNextPage}
+            />
+          ))
+        )}
       </main>
 
       <MovieDetailModal details={selectedDetails || null} onClose={() => setSelectedTmdbId(null)} mediaType={selectedTmdbId?.type} />

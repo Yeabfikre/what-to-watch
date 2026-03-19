@@ -6,9 +6,11 @@ import HeroSpotlight from "@/components/HeroSpotlight";
 import FilterBar, { type FilterValues } from "@/components/FilterBar";
 import MovieRow from "@/components/MovieRow";
 import MovieDetailModal from "@/components/MovieDetailModal";
+import { useInfiniteRow } from "@/hooks/useInfiniteRow";
 import {
   fetchDiscover,
   fetchDetails,
+  fetchDiscoverPaged,
   getMediaType,
   type TmdbMovie,
   type DiscoverOptions,
@@ -90,34 +92,34 @@ const Documentaries = () => {
     (filters.genre && filters.genre !== "All") || filters.country || filters.year || filters.rating || filters.sort !== "Popularity"
   );
 
-  const { data: popularDocs = [] } = useQuery({
-    queryKey: ["tmdb", "docs", "popular"],
-    queryFn: () => fetchDiscover({ ...DOC_BASE, type: "movie", sortBy: "popularity.desc" }),
+  // Infinite scrolling rows
+  const popularDocs = useInfiniteRow({
+    queryKey: ["tmdb", "docs", "popular", "infinite"],
+    fetchFn: (page) => fetchDiscoverPaged({ ...DOC_BASE, type: "movie", sortBy: "popularity.desc" }, page),
     enabled: !hasActiveFilters,
   });
 
-  const { data: topRatedDocs = [] } = useQuery({
-    queryKey: ["tmdb", "docs", "top_rated"],
-    queryFn: () => fetchDiscover({ ...DOC_BASE, type: "movie", sortBy: "vote_average.desc", voteAverageGte: "7" }),
+  const topRatedDocs = useInfiniteRow({
+    queryKey: ["tmdb", "docs", "top_rated", "infinite"],
+    fetchFn: (page) => fetchDiscoverPaged({ ...DOC_BASE, type: "movie", sortBy: "vote_average.desc", voteAverageGte: "7" }, page),
     enabled: !hasActiveFilters,
   });
 
-  const { data: newDocs = [] } = useQuery({
-    queryKey: ["tmdb", "docs", "new"],
-    queryFn: () => fetchDiscover({ ...DOC_BASE, type: "movie", sortBy: "primary_release_date.desc" }),
+  const newDocs = useInfiniteRow({
+    queryKey: ["tmdb", "docs", "new", "infinite"],
+    fetchFn: (page) => fetchDiscoverPaged({ ...DOC_BASE, type: "movie", sortBy: "primary_release_date.desc" }, page),
+    enabled: !hasActiveFilters,
+  });
+
+  const tvDocs = useInfiniteRow({
+    queryKey: ["tmdb", "docs", "tv", "infinite"],
+    fetchFn: (page) => fetchDiscoverPaged({ type: "tv", genreId: "99", sortBy: "popularity.desc" }, page),
     enabled: !hasActiveFilters,
   });
 
   const { data: heroDocs = [] } = useQuery({
     queryKey: ["tmdb", "docs", "hero"],
     queryFn: () => fetchDiscover({ ...DOC_BASE, type: "movie", sortBy: "popularity.desc" }),
-  });
-
-  // Also fetch TV documentaries
-  const { data: tvDocs = [] } = useQuery({
-    queryKey: ["tmdb", "docs", "tv"],
-    queryFn: () => fetchDiscover({ type: "tv", genreId: "99", sortBy: "popularity.desc" }),
-    enabled: !hasActiveFilters,
   });
 
   const filterQueryKey = useMemo(
@@ -165,14 +167,12 @@ const Documentaries = () => {
     return parts.length > 0 ? parts.join(" · ") : "Results";
   }, [filters]);
 
-  const sections = hasActiveFilters
-    ? [{ title: filterLabel, movies: filteredResults }]
-    : [
-        { title: "Popular Documentaries", movies: popularDocs },
-        { title: "Top Rated Documentaries", movies: topRatedDocs },
-        { title: "New Documentaries", movies: newDocs },
-        { title: "Documentary Series", movies: tvDocs },
-      ];
+  const infiniteRows = [
+    { title: "Popular Documentaries", ...popularDocs },
+    { title: "Top Rated Documentaries", ...topRatedDocs },
+    { title: "New Documentaries", ...newDocs },
+    { title: "Documentary Series", ...tvDocs },
+  ];
 
   return (
     <div className="min-h-screen bg-background transition-colors">
@@ -184,9 +184,21 @@ const Documentaries = () => {
       </div>
 
       <main className="flex flex-col gap-8 px-6 pb-16 md:px-12 lg:px-16">
-        {sections.map((section) => (
-          <MovieRow key={section.title} title={section.title} movies={section.movies} onMovieClick={handleClick} />
-        ))}
+        {hasActiveFilters ? (
+          <MovieRow title={filterLabel} movies={filteredResults} onMovieClick={handleClick} />
+        ) : (
+          infiniteRows.map((row) => (
+            <MovieRow
+              key={row.title}
+              title={row.title}
+              movies={row.movies}
+              onMovieClick={handleClick}
+              fetchNextPage={row.fetchNextPage}
+              hasNextPage={row.hasNextPage}
+              isFetchingNextPage={row.isFetchingNextPage}
+            />
+          ))
+        )}
       </main>
 
       <MovieDetailModal details={selectedDetails || null} onClose={() => setSelectedTmdbId(null)} mediaType={selectedTmdbId?.type} />

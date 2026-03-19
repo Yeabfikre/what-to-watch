@@ -115,6 +115,13 @@ export interface TmdbGenre {
   name: string;
 }
 
+// Paginated response from TMDB list endpoints
+export interface PaginatedResult {
+  results: TmdbMovie[];
+  page: number;
+  total_pages: number;
+}
+
 // Fetch functions
 export async function fetchTrending(type: "all" | "movie" | "tv" = "all") {
   const data = await callTmdb({ action: "trending", type });
@@ -139,6 +146,52 @@ export async function fetchNowPlaying() {
 export async function fetchOnTheAir() {
   const data = await callTmdb({ action: "on_the_air" });
   return data.results as TmdbMovie[];
+}
+
+// --- Paginated variants (for infinite scrolling) ---
+
+export async function fetchTrendingPaged(type: "all" | "movie" | "tv" = "all", page = 1): Promise<PaginatedResult> {
+  const data = await callTmdb({ action: "trending", type, page: String(page) });
+  return { results: data.results as TmdbMovie[], page: data.page, total_pages: data.total_pages };
+}
+
+export async function fetchPopularPaged(type: "movie" | "tv" = "movie", page = 1): Promise<PaginatedResult> {
+  const data = await callTmdb({ action: "popular", type, page: String(page) });
+  return { results: data.results as TmdbMovie[], page: data.page, total_pages: data.total_pages };
+}
+
+export async function fetchTopRatedPaged(type: "movie" | "tv" = "movie", page = 1): Promise<PaginatedResult> {
+  const data = await callTmdb({ action: "top_rated", type, page: String(page) });
+  return { results: data.results as TmdbMovie[], page: data.page, total_pages: data.total_pages };
+}
+
+export async function fetchNowPlayingPaged(page = 1): Promise<PaginatedResult> {
+  const data = await callTmdb({ action: "now_playing", page: String(page) });
+  return { results: data.results as TmdbMovie[], page: data.page, total_pages: data.total_pages };
+}
+
+export async function fetchOnTheAirPaged(page = 1): Promise<PaginatedResult> {
+  const data = await callTmdb({ action: "on_the_air", page: String(page) });
+  return { results: data.results as TmdbMovie[], page: data.page, total_pages: data.total_pages };
+}
+
+export async function fetchDiscoverPaged(
+  opts: DiscoverOptions,
+  page = 1,
+): Promise<PaginatedResult> {
+  const params: Record<string, string> = { action: "discover", type: opts.type, page: String(page) };
+  if (opts.genreId) params.genre_id = opts.genreId;
+  if (opts.companyId) params.with_companies = opts.companyId;
+  if (opts.sortBy) params.sort_by = opts.sortBy;
+  if (opts.year) params.year = opts.year;
+  if (opts.yearGte) params.year_gte = opts.yearGte;
+  if (opts.yearLte) params.year_lte = opts.yearLte;
+  if (opts.voteAverageGte) params.vote_average_gte = opts.voteAverageGte;
+  if (opts.withOriginalLanguage) params.with_original_language = opts.withOriginalLanguage;
+  if (opts.withOriginCountry) params.with_origin_country = opts.withOriginCountry;
+  if (opts.withKeywords) params.with_keywords = opts.withKeywords;
+  const data = await callTmdb(params);
+  return { results: data.results as TmdbMovie[], page: data.page, total_pages: data.total_pages };
 }
 
 export interface DiscoverOptions {

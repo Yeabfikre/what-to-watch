@@ -6,14 +6,18 @@ import MovieDetailModal from "@/components/MovieDetailModal";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HeroSpotlight from "@/components/HeroSpotlight";
+import { useInfiniteRow } from "@/hooks/useInfiniteRow";
 import {
   fetchTrending,
   fetchPopular,
   fetchTopRated,
-  fetchNowPlaying,
-  fetchOnTheAir,
   fetchDetails,
   fetchDiscover,
+  fetchTrendingPaged,
+  fetchPopularPaged,
+  fetchTopRatedPaged,
+  fetchNowPlayingPaged,
+  fetchOnTheAirPaged,
   getMediaType,
   type TmdbMovie,
   type DiscoverOptions,
@@ -119,34 +123,34 @@ const Index = () => {
     filters.sort !== "Popularity"
   );
 
-  // --- Default section queries (only fetch when no active filters) ---
-  const { data: trending = [] } = useQuery({
-    queryKey: ["tmdb", "trending"],
-    queryFn: () => fetchTrending("all"),
+  // --- Infinite scrolling rows (only when no active filters) ---
+  const trending = useInfiniteRow({
+    queryKey: ["tmdb", "trending", "infinite"],
+    fetchFn: (page) => fetchTrendingPaged("all", page),
     enabled: !hasActiveFilters,
   });
 
-  const { data: topRated = [] } = useQuery({
-    queryKey: ["tmdb", "topRated"],
-    queryFn: () => fetchTopRated("movie"),
+  const topRated = useInfiniteRow({
+    queryKey: ["tmdb", "topRated", "movie", "infinite"],
+    fetchFn: (page) => fetchTopRatedPaged("movie", page),
     enabled: !hasActiveFilters,
   });
 
-  const { data: popularTV = [] } = useQuery({
-    queryKey: ["tmdb", "popular", "tv"],
-    queryFn: () => fetchPopular("tv"),
+  const nowPlaying = useInfiniteRow({
+    queryKey: ["tmdb", "nowPlaying", "infinite"],
+    fetchFn: (page) => fetchNowPlayingPaged(page),
     enabled: !hasActiveFilters,
   });
 
-  const { data: onTheAir = [] } = useQuery({
-    queryKey: ["tmdb", "onTheAir"],
-    queryFn: () => fetchOnTheAir(),
+  const popularTV = useInfiniteRow({
+    queryKey: ["tmdb", "popular", "tv", "infinite"],
+    fetchFn: (page) => fetchPopularPaged("tv", page),
     enabled: !hasActiveFilters,
   });
 
-  const { data: nowPlaying = [] } = useQuery({
-    queryKey: ["tmdb", "nowPlaying"],
-    queryFn: () => fetchNowPlaying(),
+  const onTheAir = useInfiniteRow({
+    queryKey: ["tmdb", "onTheAir", "infinite"],
+    fetchFn: (page) => fetchOnTheAirPaged(page),
     enabled: !hasActiveFilters,
   });
 
@@ -249,7 +253,7 @@ const Index = () => {
       const genreConfig = filters.genre ? GENRE_FILTER_MAP[filters.genre] : null;
 
       // Special cases
-      if (genreConfig?.special === "now_playing") return fetchNowPlaying();
+      if (genreConfig?.special === "now_playing") return fetchNowPlayingPaged().then((r) => r.results);
       if (genreConfig?.special === "paramount") {
         return fetchDiscover({
           type: "movie",
@@ -294,15 +298,13 @@ const Index = () => {
     return parts.length > 0 ? parts.join(" · ") : "Results";
   }, [filters]);
 
-  const sections = hasActiveFilters
-    ? [{ title: filterLabel, movies: filteredResults }]
-    : [
-        { title: "Trending now", movies: trending },
-        { title: "Top rated", movies: topRated },
-        { title: "Now playing", movies: nowPlaying },
-        { title: "Popular TV shows", movies: popularTV },
-        { title: "On the air", movies: onTheAir },
-      ];
+  const infiniteRows = [
+    { title: "Trending now", ...trending },
+    { title: "Top rated", ...topRated },
+    { title: "Now playing", ...nowPlaying },
+    { title: "Popular TV shows", ...popularTV },
+    { title: "On the air", ...onTheAir },
+  ];
 
   return (
     <div className="min-h-screen bg-background transition-colors">
@@ -318,14 +320,25 @@ const Index = () => {
       </div>
 
       <main className="flex flex-col gap-8 px-6 pb-16 md:px-12 lg:px-16">
-        {sections.map((section) => (
+        {hasActiveFilters ? (
           <MovieRow
-            key={section.title}
-            title={section.title}
-            movies={section.movies}
+            title={filterLabel}
+            movies={filteredResults}
             onMovieClick={handleMovieClick}
           />
-        ))}
+        ) : (
+          infiniteRows.map((row) => (
+            <MovieRow
+              key={row.title}
+              title={row.title}
+              movies={row.movies}
+              onMovieClick={handleMovieClick}
+              fetchNextPage={row.fetchNextPage}
+              hasNextPage={row.hasNextPage}
+              isFetchingNextPage={row.isFetchingNextPage}
+            />
+          ))
+        )}
       </main>
 
       <MovieDetailModal

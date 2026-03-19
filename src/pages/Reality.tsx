@@ -6,9 +6,11 @@ import HeroSpotlight from "@/components/HeroSpotlight";
 import FilterBar, { type FilterValues } from "@/components/FilterBar";
 import MovieRow from "@/components/MovieRow";
 import MovieDetailModal from "@/components/MovieDetailModal";
+import { useInfiniteRow } from "@/hooks/useInfiniteRow";
 import {
   fetchDiscover,
   fetchDetails,
+  fetchDiscoverPaged,
   type TmdbMovie,
   type DiscoverOptions,
 } from "@/lib/tmdb";
@@ -66,21 +68,22 @@ const Reality = () => {
     (filters.genre && filters.genre !== "All") || filters.country || filters.year || filters.rating || filters.sort !== "Popularity"
   );
 
-  const { data: popularReality = [] } = useQuery({
-    queryKey: ["tmdb", "reality", "popular"],
-    queryFn: () => fetchDiscover({ ...REALITY_BASE, type: "tv", sortBy: "popularity.desc" }),
+  // Infinite scrolling rows
+  const popularReality = useInfiniteRow({
+    queryKey: ["tmdb", "reality", "popular", "infinite"],
+    fetchFn: (page) => fetchDiscoverPaged({ ...REALITY_BASE, type: "tv", sortBy: "popularity.desc" }, page),
     enabled: !hasActiveFilters,
   });
 
-  const { data: topRatedReality = [] } = useQuery({
-    queryKey: ["tmdb", "reality", "top_rated"],
-    queryFn: () => fetchDiscover({ ...REALITY_BASE, type: "tv", sortBy: "vote_average.desc", voteAverageGte: "6" }),
+  const topRatedReality = useInfiniteRow({
+    queryKey: ["tmdb", "reality", "top_rated", "infinite"],
+    fetchFn: (page) => fetchDiscoverPaged({ ...REALITY_BASE, type: "tv", sortBy: "vote_average.desc", voteAverageGte: "6" }, page),
     enabled: !hasActiveFilters,
   });
 
-  const { data: newReality = [] } = useQuery({
-    queryKey: ["tmdb", "reality", "new"],
-    queryFn: () => fetchDiscover({ ...REALITY_BASE, type: "tv", sortBy: "primary_release_date.desc" }),
+  const newReality = useInfiniteRow({
+    queryKey: ["tmdb", "reality", "new", "infinite"],
+    fetchFn: (page) => fetchDiscoverPaged({ ...REALITY_BASE, type: "tv", sortBy: "primary_release_date.desc" }, page),
     enabled: !hasActiveFilters,
   });
 
@@ -133,13 +136,11 @@ const Reality = () => {
     return parts.length > 0 ? parts.join(" · ") : "Results";
   }, [filters]);
 
-  const sections = hasActiveFilters
-    ? [{ title: filterLabel, movies: filteredResults }]
-    : [
-        { title: "Popular Reality Shows", movies: popularReality },
-        { title: "Top Rated Reality", movies: topRatedReality },
-        { title: "New Reality Shows", movies: newReality },
-      ];
+  const infiniteRows = [
+    { title: "Popular Reality Shows", ...popularReality },
+    { title: "Top Rated Reality", ...topRatedReality },
+    { title: "New Reality Shows", ...newReality },
+  ];
 
   return (
     <div className="min-h-screen bg-background transition-colors">
@@ -151,9 +152,21 @@ const Reality = () => {
       </div>
 
       <main className="flex flex-col gap-8 px-6 pb-16 md:px-12 lg:px-16">
-        {sections.map((section) => (
-          <MovieRow key={section.title} title={section.title} movies={section.movies} onMovieClick={handleClick} />
-        ))}
+        {hasActiveFilters ? (
+          <MovieRow title={filterLabel} movies={filteredResults} onMovieClick={handleClick} />
+        ) : (
+          infiniteRows.map((row) => (
+            <MovieRow
+              key={row.title}
+              title={row.title}
+              movies={row.movies}
+              onMovieClick={handleClick}
+              fetchNextPage={row.fetchNextPage}
+              hasNextPage={row.hasNextPage}
+              isFetchingNextPage={row.isFetchingNextPage}
+            />
+          ))
+        )}
       </main>
 
       <MovieDetailModal details={selectedDetails || null} onClose={() => setSelectedTmdbId(null)} mediaType="tv" />

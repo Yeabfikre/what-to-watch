@@ -64,7 +64,8 @@ serve(async (req) => {
       case "trending": {
         const type = validateType(url.searchParams.get("type"), "all");
         const tw = url.searchParams.get("window") === "day" ? "day" : "week";
-        data = await tmdbFetch(`/trending/${type}/${tw}`);
+        const page = validatePage(url.searchParams.get("page"));
+        data = await tmdbFetch(`/trending/${type}/${tw}?page=${page}`);
         break;
       }
       case "popular": {
@@ -75,11 +76,13 @@ serve(async (req) => {
       }
       case "top_rated": {
         const type = validateType(url.searchParams.get("type"));
-        data = await tmdbFetch(`/${type}/top_rated`);
+        const page = validatePage(url.searchParams.get("page"));
+        data = await tmdbFetch(`/${type}/top_rated?page=${page}`);
         break;
       }
       case "now_playing": {
-        data = await tmdbFetch(`/movie/now_playing`);
+        const page = validatePage(url.searchParams.get("page"));
+        data = await tmdbFetch(`/movie/now_playing?page=${page}`);
         break;
       }
       case "upcoming": {
@@ -88,7 +91,8 @@ serve(async (req) => {
         break;
       }
       case "on_the_air": {
-        data = await tmdbFetch(`/tv/on_the_air`);
+        const page = validatePage(url.searchParams.get("page"));
+        data = await tmdbFetch(`/tv/on_the_air?page=${page}`);
         break;
       }
       case "discover": {
@@ -137,6 +141,8 @@ serve(async (req) => {
           }
         }
         if (voteGte) path += `&vote_average.gte=${voteGte}&vote_count.gte=50`;
+        const discoverPage = validatePage(url.searchParams.get("page"));
+        path += `&page=${discoverPage}`;
         data = await tmdbFetch(path);
         break;
       }
