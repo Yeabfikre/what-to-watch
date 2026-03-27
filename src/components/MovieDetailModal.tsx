@@ -172,7 +172,7 @@ const MovieDetailModal = ({ details, onClose, mediaType }: MovieDetailModalProps
                   </div>
 
                   <div className="mt-3 flex flex-wrap gap-1.5">
-                    {details.genres.map((g) => (
+                    {(details.genres || []).map((g) => (
                       <Badge key={g.id} variant="secondary" className="text-xs">
                         {g.name}
                       </Badge>
@@ -372,7 +372,7 @@ const MovieDetailModal = ({ details, onClose, mediaType }: MovieDetailModalProps
                                   <div className="mt-1 flex items-center gap-1">
                                     <Star className="h-3 w-3 fill-gold text-gold" />
                                     <span className="text-[11px] font-medium text-foreground">
-                                      {ep.vote_average.toFixed(1)}
+                                      {(ep.vote_average || 0).toFixed(1)}
                                     </span>
                                   </div>
                                 )}

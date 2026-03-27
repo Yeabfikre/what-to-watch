@@ -242,7 +242,7 @@ const Watch = () => {
                 {details.genres?.length > 0 && (
                   <div>
                     <span className="text-muted-foreground">Genre: </span>
-                    <span className="text-foreground">{details.genres.map((g) => g.name).join(", ")}</span>
+                    <span className="text-foreground">{(details.genres || []).map((g) => g.name).join(", ")}</span>
                   </div>
                 )}
                 {cast.length > 0 && (

@@ -263,7 +263,7 @@ const NewsCard = ({
         {item.vote_average > 0 && (
           <div className="absolute right-3 top-3 flex items-center gap-1 rounded-md bg-background/80 px-2 py-0.5 text-xs font-semibold backdrop-blur-sm">
             <Star className="h-3 w-3 fill-gold text-gold" />
-            <span className="text-foreground">{item.vote_average.toFixed(1)}</span>
+            <span className="text-foreground">{(item.vote_average || 0).toFixed(1)}</span>
           </div>
         )}
       </div>

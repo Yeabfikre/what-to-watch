@@ -130,7 +130,7 @@ const SearchBar = ({ onMovieClick }: SearchBarProps) => {
                           {movie.vote_average > 0 && (
                             <span className="flex items-center gap-0.5">
                               <Star className="h-3 w-3 fill-gold text-gold" />
-                              {movie.vote_average.toFixed(1)}
+                              {(movie.vote_average || 0).toFixed(1)}
                             </span>
                           )}
                         </div>
