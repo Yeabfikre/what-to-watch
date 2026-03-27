@@ -158,7 +158,7 @@ const MovieDetailModal = ({ details, onClose, mediaType }: MovieDetailModalProps
 
                   {/* Ratings */}
                   <div className="mt-3 flex flex-wrap gap-2">
-                    <RatingBadge source="TMDB" value={details.vote_average.toFixed(1)} />
+                    <RatingBadge source="TMDB" value={(details.vote_average || 0).toFixed(1)} />
                     {imdbId && (
                       <a
                         href={`https://www.imdb.com/title/${imdbId}/`}

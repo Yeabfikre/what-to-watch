@@ -125,7 +125,7 @@ export interface PaginatedResult {
 // Fetch functions
 export async function fetchTrending(type: "all" | "movie" | "tv" = "all") {
   const data = await callTmdb({ action: "trending", type });
-  return data.results as TmdbMovie[];
+  return (data.results as TmdbMovie[]).filter(m => m.media_type !== "person");
 }
 
 export async function fetchPopular(type: "movie" | "tv" = "movie") {
@@ -152,7 +152,8 @@ export async function fetchOnTheAir() {
 
 export async function fetchTrendingPaged(type: "all" | "movie" | "tv" = "all", page = 1): Promise<PaginatedResult> {
   const data = await callTmdb({ action: "trending", type, page: String(page) });
-  return { results: data.results as TmdbMovie[], page: data.page, total_pages: data.total_pages };
+  const results = (data.results as TmdbMovie[]).filter(m => m.media_type !== "person");
+  return { results, page: data.page, total_pages: data.total_pages };
 }
 
 export async function fetchPopularPaged(type: "movie" | "tv" = "movie", page = 1): Promise<PaginatedResult> {
@@ -241,7 +242,7 @@ export async function fetchDetails(id: number, type: "movie" | "tv") {
 
 export async function fetchSearch(query: string) {
   const data = await callTmdb({ action: "search", query });
-  return data.results as TmdbMovie[];
+  return (data.results as TmdbMovie[]).filter(m => m.media_type !== "person");
 }
 
 export async function fetchSeason(tvId: number, seasonNumber: number) {

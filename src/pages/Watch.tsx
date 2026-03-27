@@ -197,7 +197,7 @@ const Watch = () => {
                 {/* Rating */}
                 <div className="mt-2 flex items-center gap-1 text-sm">
                   <Star className="h-4 w-4 fill-gold text-gold" />
-                  <span className="font-bold text-foreground">{details.vote_average.toFixed(1)}</span>
+                  <span className="font-bold text-foreground">{(details.vote_average || 0).toFixed(1)}</span>
                   <span className="text-muted-foreground">/ 10</span>
                 </div>
               </div>
@@ -226,7 +226,7 @@ const Watch = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <Badge variant="outline" className="cursor-pointer">IMDB: {details.vote_average.toFixed(1)}</Badge>
+                    <Badge variant="outline" className="cursor-pointer">IMDB: {(details.vote_average || 0).toFixed(1)}</Badge>
                   </a>
                 )}
               </div>

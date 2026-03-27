@@ -22,7 +22,7 @@ const MovieCard = ({ movie, index, onClick }: MovieCardProps) => {
   const year = getYear(movie);
   const type = getMediaType(movie);
   const genres = (movie.genre_ids || []).slice(0, 3);
-  const matchPercent = Math.round(movie.vote_average * 10);
+  const matchPercent = Math.round((movie.vote_average || 0) * 10);
 
   const genreMap: Record<number, string> = {
     28: "Action", 12: "Adventure", 16: "Animation", 35: "Comedy",
@@ -106,7 +106,7 @@ const MovieCard = ({ movie, index, onClick }: MovieCardProps) => {
               )}
               <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded-md bg-background/80 px-1.5 py-0.5 text-xs font-semibold backdrop-blur-sm">
                 <Star className="h-3 w-3 fill-gold text-gold" />
-                <span className="text-foreground">{movie.vote_average.toFixed(1)}</span>
+                <span className="text-foreground">{(movie.vote_average || 0).toFixed(1)}</span>
               </div>
               <div className="absolute left-2 top-2 rounded-md bg-background/80 px-1.5 py-0.5 text-[10px] font-medium uppercase text-muted-foreground backdrop-blur-sm">
                 {type === "tv" ? "Series" : "Movie"}
@@ -160,7 +160,7 @@ const MovieCard = ({ movie, index, onClick }: MovieCardProps) => {
                   <Play className="h-3.5 w-3.5 fill-current" />
                 </button>
                 <span className="ml-auto text-xs font-bold text-foreground">
-                  {movie.vote_average.toFixed(1)}
+                  {(movie.vote_average || 0).toFixed(1)}
                   <Star className="ml-0.5 inline h-3 w-3 fill-gold text-gold" />
                 </span>
               </div>
@@ -175,7 +175,7 @@ const MovieCard = ({ movie, index, onClick }: MovieCardProps) => {
                     <span>·</span>
                     <span className="flex items-center gap-0.5">
                       <Star className="h-2.5 w-2.5 fill-primary text-primary" />
-                      {movie.vote_average.toFixed(1)}
+                      {(movie.vote_average || 0).toFixed(1)}
                     </span>
                   </>
                 )}
