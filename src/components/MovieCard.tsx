@@ -76,7 +76,7 @@ const MovieCard = ({ movie, index, onClick }: MovieCardProps) => {
           ? { width: { type: "spring", stiffness: 400, damping: 30, mass: 0.8 }, delay: 0, duration: 0.3 }
           : { delay: index * 0.03, duration: 0.3 }
       }
-      className="group shrink-0 cursor-pointer snap-start"
+      className="group shrink-0 cursor-pointer snap-start h-full"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => onClick(movie)}
@@ -89,6 +89,7 @@ const MovieCard = ({ movie, index, onClick }: MovieCardProps) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
+            className="flex h-full flex-col justify-between"
           >
             <div className="relative overflow-hidden rounded-lg">
               {posterUrl && !imgError ? (
@@ -112,8 +113,10 @@ const MovieCard = ({ movie, index, onClick }: MovieCardProps) => {
                 {type === "tv" ? "Series" : "Movie"}
               </div>
             </div>
-            <p className="mt-2 truncate text-sm font-medium text-foreground">{title}</p>
-            <p className="text-xs text-muted-foreground">{year || ""}</p>
+            <div className="mt-auto">
+              <p className="mt-2 truncate text-sm font-medium text-foreground">{title}</p>
+              <p className="text-xs text-muted-foreground">{year || ""}</p>
+            </div>
           </motion.div>
         ) : (
           <motion.div
@@ -122,10 +125,10 @@ const MovieCard = ({ movie, index, onClick }: MovieCardProps) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
-            className="overflow-visible rounded-xl bg-card shadow-2xl shadow-black/40 ring-1 ring-border/20"
+            className="flex h-full flex-col overflow-visible rounded-xl bg-card shadow-2xl shadow-black/40 ring-1 ring-border/20"
           >
             {/* Alternate poster preview */}
-            <div className="relative aspect-video w-full overflow-hidden rounded-t-xl">
+            <div className="relative aspect-video w-full shrink-0 overflow-hidden rounded-t-xl">
               {expandedPosterUrl && expandedImgReady ? (
                 hasBackdrop ? (
                   <img src={expandedPosterUrl} alt={title} className="h-full w-full object-cover object-center" />
@@ -149,7 +152,7 @@ const MovieCard = ({ movie, index, onClick }: MovieCardProps) => {
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, duration: 0.25 }}
-              className="space-y-1.5 p-2.5"
+              className="flex flex-1 flex-col justify-between p-2.5"
             >
               {/* Action buttons */}
               <div className="flex items-center gap-2">

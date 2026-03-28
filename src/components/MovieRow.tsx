@@ -89,7 +89,7 @@ const MovieRow = ({ title, movies, onMovieClick, fetchNextPage, hasNextPage, isF
         <div
           ref={scrollRef}
           onScroll={handleScroll}
-          className="hide-scrollbar flex h-[300px] items-start gap-4 overflow-x-auto overflow-y-visible pb-2 scroll-smooth"
+          className="hide-scrollbar flex min-h-[300px] items-stretch gap-4 overflow-x-auto overflow-y-visible pb-4 pt-2 scroll-smooth"
           style={{ overscrollBehavior: "auto" }}
         >
           {filteredMovies.map((movie, i) => (
