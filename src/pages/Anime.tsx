@@ -11,6 +11,7 @@ import {
   fetchDiscover,
   fetchDetails,
   fetchDiscoverPaged,
+  getMediaType,
   type TmdbMovie,
   type DiscoverOptions,
 } from "@/lib/tmdb";
@@ -117,7 +118,7 @@ const Anime = () => {
   });
 
   const handleClick = (movie: TmdbMovie) => {
-    const type = movie.first_air_date ? "tv" : "movie";
+    const type = getMediaType(movie);
     setSelectedTmdbId({ id: movie.id, type });
   };
 

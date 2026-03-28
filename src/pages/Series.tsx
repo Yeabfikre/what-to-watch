@@ -15,6 +15,7 @@ import {
   fetchPopularPaged,
   fetchTopRatedPaged,
   fetchOnTheAirPaged,
+  getMediaType,
   type TmdbMovie,
   type DiscoverOptions,
 } from "@/lib/tmdb";
@@ -142,7 +143,8 @@ const Series = () => {
   });
 
   const handleSeriesClick = (movie: TmdbMovie) => {
-    setSelectedTmdbId({ id: movie.id, type: "tv" });
+    const type = getMediaType(movie);
+    setSelectedTmdbId({ id: movie.id, type });
   };
 
   const categories = ["All", ...Object.keys(TV_GENRES)];

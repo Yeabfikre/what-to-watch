@@ -11,6 +11,7 @@ import {
   fetchDiscover,
   fetchDetails,
   fetchDiscoverPaged,
+  getMediaType,
   type TmdbMovie,
   type DiscoverOptions,
 } from "@/lib/tmdb";
@@ -121,7 +122,8 @@ const Reality = () => {
   });
 
   const handleClick = (movie: TmdbMovie) => {
-    setSelectedTmdbId({ id: movie.id, type: "tv" });
+    const type = getMediaType(movie);
+    setSelectedTmdbId({ id: movie.id, type });
   };
 
   const categories = ["All", ...Object.keys(REALITY_SUBGENRES)];
@@ -169,7 +171,7 @@ const Reality = () => {
         )}
       </main>
 
-      <MovieDetailModal details={selectedDetails || null} onClose={() => setSelectedTmdbId(null)} mediaType="tv" />
+      <MovieDetailModal details={selectedDetails || null} onClose={() => setSelectedTmdbId(null)} mediaType={selectedTmdbId?.type} />
       <Footer />
     </div>
   );
