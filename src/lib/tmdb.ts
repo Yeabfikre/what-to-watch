@@ -27,7 +27,14 @@ async function callTmdb(params: Record<string, string>) {
     throw new Error(`TMDB API error [${res.status}]: ${errorBody}`);
   }
   
-  return res.json();
+  const data = await res.json();
+  
+  // Explicitly filter out any adult content that sneaks through the edge proxy
+  if (data && data.results && Array.isArray(data.results)) {
+    data.results = data.results.filter((item: any) => item.adult !== true && item.original_title !== "Tuklas" && item.original_title !== "Sundutan" && item.title !== "Tuklas" && item.title !== "Sundutan");
+  }
+  
+  return data;
 }
 
 export interface TmdbMovie {
