@@ -9,7 +9,9 @@ export const tmdbImg = {
 };
 
 async function callTmdb(params: Record<string, string>) {
-  const query = new URLSearchParams(params).toString();
+  // Filter out adult content globally
+  const queryParams = { ...params, include_adult: "false" };
+  const query = new URLSearchParams(queryParams).toString();
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const url = `${supabaseUrl}/functions/v1/tmdb?${query}`;
   
