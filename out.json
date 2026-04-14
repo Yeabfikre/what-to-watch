@@ -1,0 +1,117 @@
+[
+  {
+    "query": "Stepdaddy",
+    "results": [
+      {
+        "adult": false,
+        "backdrop_path": "/nyW8YdrnSYtmTE9hgrpmGqkKw5b.jpg",
+        "id": 1658216,
+        "title": "Stepdaddy",
+        "original_title": "Stepdaddy",
+        "overview": "Emotions and intrigue run high in this titillating taboo family affair. Chloe and Nica are sisters who both find themselves in their own passionate love affairs with their stepdad Carl.",
+        "poster_path": "/oZxNblisKuDzSUW5g18FERjyJs9.jpg",
+        "media_type": "movie",
+        "original_language": "tl",
+        "genre_ids": [
+          18
+        ],
+        "popularity": 46.0838,
+        "release_date": "2026-04-04",
+        "video": false,
+        "vote_average": 5,
+        "vote_count": 1
+      },
+      {
+        "adult": false,
+        "backdrop_path": null,
+        "id": 587158,
+        "title": "Stepdaddy",
+        "original_title": "Stepdaddy",
+        "overview": "Patricia goes to Wyatt’s house for dinner. They eat soggy spaghetti and she gets too drunk. She asks him for a personal favor, he deals her a personal blow. Her dad comes over later in the night.",
+        "poster_path": "/5zYTxSjKOc4ga1BfLP5ht1OlKA4.jpg",
+        "media_type": "movie",
+        "original_language": "en",
+        "genre_ids": [
+          35
+        ],
+        "popularity": 1.1798,
+        "release_date": "2019-03-09",
+        "video": false,
+        "vote_average": 0,
+        "vote_count": 0
+      }
+    ]
+  },
+  {
+    "query": "Scorpio Nights 4",
+    "results": [
+      {
+        "adult": false,
+        "backdrop_path": "/sYQwMTzlb8uSyaE7e3cfpfYOshu.jpg",
+        "id": 1658214,
+        "title": "Scorpio Nights 4",
+        "original_title": "Scorpio Nights 4",
+        "overview": "A countryside boy rents a room from a couple and discovers a hole exposing their secrets. His voyeurism leads into tangled affairs with two women, unraveling a twisted game of lust and betrayal.",
+        "poster_path": "/lhgGvrHkwu9mtNeAhzaG828boH4.jpg",
+        "media_type": "movie",
+        "original_language": "tl",
+        "genre_ids": [
+          18
+        ],
+        "popularity": 30.0498,
+        "release_date": "2026-03-31",
+        "video": false,
+        "vote_average": 5,
+        "vote_count": 1
+      }
+    ]
+  },
+  {
+    "query": "Tuklas",
+    "results": [
+      {
+        "adult": false,
+        "backdrop_path": "/wuZB5l6jzK1psUnMZEe3wGEupMM.jpg",
+        "id": 1652947,
+        "title": "Tuklas",
+        "original_title": "Tuklas",
+        "overview": "The first Bisaya VMX Original stars true-blooded Bisaya Skye Gonzaga. When IT officer Chris Alvarado uncovers a financial scandal at work, he faces a moral dilemma: exposing the truth or giving in to Anna, a seductive sales manager promising success and intimacy.",
+        "poster_path": "/pJiNDWSEguOY8m5x2vbgnl9DPme.jpg",
+        "media_type": "movie",
+        "original_language": "tl",
+        "genre_ids": [
+          18
+        ],
+        "popularity": 11.0971,
+        "release_date": "2026-03-20",
+        "video": false,
+        "vote_average": 7,
+        "vote_count": 2
+      }
+    ]
+  },
+  {
+    "query": "Sundutan",
+    "results": [
+      {
+        "adult": false,
+        "backdrop_path": "/zYm62AouAahA71AoOWHE5Qb0FYH.jpg",
+        "id": 1646787,
+        "title": "Sundutan",
+        "original_title": "Sundutan",
+        "overview": "A hole on the wall accidentally connects two women emotionally and physically. Forbidden love, greed, betrayal... what lies beyond the hole? And for how long can they keep covering it up?",
+        "poster_path": "/2neZgVuY7prWIak5hhNKT53Hk0N.jpg",
+        "media_type": "movie",
+        "original_language": "tl",
+        "genre_ids": [
+          18
+        ],
+        "popularity": 61.3902,
+        "release_date": "2026-03-06",
+        "video": false,
+        "vote_average": 4,
+        "vote_count": 1
+      }
+    ]
+  }
+]

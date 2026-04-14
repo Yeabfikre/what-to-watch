@@ -8,6 +8,85 @@ export const tmdbImg = {
   profile: (path: string | null) => path ? `${IMG_BASE}/w185${path}` : null,
 };
 
+const BANNED_TITLES = new Set([
+  "tuklas",
+  "sundutan",
+  "stepdaddy",
+  "scorpio nights",
+  "scorpio nights 2",
+  "scorpio nights 3",
+  "scorpio nights 4",
+  "high on sex",
+  "pamasahe",
+  "us x her",
+  "mahjong nights",
+  "kaka",
+  "palitan",
+  "x-deal",
+  "x deal",
+  "bula",
+  "sisid",
+  "purificacion",
+  "pula",
+  "iskandalo",
+  "bugaw",
+  "kaluskos",
+  "pucha",
+  "afam",
+  "salakab",
+  "kabit",
+  "tuhog",
+  "hugot",
+  "paraluman",
+  "belyas",
+  "boso",
+  "boso dos",
+  "ligaw na bulaklak",
+  "tag-init",
+  "pantasya",
+  "virgin forest",
+  "hubad",
+  "kinig",
+  "silip",
+  "halik",
+  "kiskisan",
+  "kangkong",
+  "sugapa",
+  "init",
+  "kati",
+  "uhaw",
+  "katas",
+  "libog"
+]);
+
+const BANNED_KEYWORDS = [
+  "vmx original",
+  "vivamax",
+  "viva films adult",
+  "voyeurism",
+  "sexcapades",
+  "nymphomaniac",
+  "erotic thriller",
+  "softcore"
+];
+
+function isAdultOrBanned(item: any): boolean {
+  if (item.adult === true) return true;
+  
+  const title = (item.title || item.original_title || item.name || item.original_name || "").toLowerCase().trim();
+  
+  if (BANNED_TITLES.has(title) || title.startsWith("scorpio nights")) {
+    return true;
+  }
+  
+  const overview = (item.overview || "").toLowerCase();
+  if (BANNED_KEYWORDS.some(keyword => overview.includes(keyword))) {
+    return true;
+  }
+  
+  return false;
+}
+
 async function callTmdb(params: Record<string, string>) {
   // Filter out adult content globally
   const queryParams = { ...params, include_adult: "false" };
@@ -31,7 +110,7 @@ async function callTmdb(params: Record<string, string>) {
   
   // Explicitly filter out any adult content that sneaks through the edge proxy
   if (data && data.results && Array.isArray(data.results)) {
-    data.results = data.results.filter((item: any) => item.adult !== true && item.original_title !== "Tuklas" && item.original_title !== "Sundutan" && item.title !== "Tuklas" && item.title !== "Sundutan");
+    data.results = data.results.filter((item: any) => !isAdultOrBanned(item));
   }
   
   return data;
