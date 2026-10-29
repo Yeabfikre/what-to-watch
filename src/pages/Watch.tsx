@@ -21,13 +21,13 @@ import {
   type TmdbDetails,
 } from "@/lib/tmdb";
 
-const PROVIDERS = [
+export const PROVIDERS = [
   {
     name: "MegaCloud",
-    sandbox: true,
-    movie: (id: string) => `https://vidsrc.cc/v2/embed/movie/${id}`,
+    sandbox: false,
+    movie: (id: string) => `https://vidsrc.su/embed/movie/${id}`,
     tv: (id: string, s?: number, e?: number) =>
-      `https://vidsrc.cc/v2/embed/tv/${id}/${s ?? 1}/${e ?? 1}`,
+      `https://vidsrc.su/embed/tv/${id}/${s ?? 1}/${e ?? 1}`,
   },
   {
     name: "MultiStream",
@@ -46,9 +46,9 @@ const PROVIDERS = [
   {
     name: "VidsrcPro",
     sandbox: false,
-    movie: (id: string) => `https://vidsrc.pro/embed/movie/${id}`,
+    movie: (id: string) => `https://vidsrc.pm/embed/movie?tmdb=${id}`,
     tv: (id: string, s?: number, e?: number) =>
-      `https://vidsrc.pro/embed/tv/${id}/${s ?? 1}/${e ?? 1}`,
+      `https://vidsrc.pm/embed/tv?tmdb=${id}&season=${s ?? 1}&episode=${e ?? 1}`,
   },
 ];
 
