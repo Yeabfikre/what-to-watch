@@ -1,0 +1,24 @@
+{
+  "library": {
+    "name": "Lucide (closest match by drawing style)",
+    "package": "lucide-react",
+    "licence": "free",
+    "licenceName": "ISC",
+    "alternative": null
+  },
+  "detectedBy": "drawing-style",
+  "iconsUsed": [],
+  "style": {
+    "sizePx": 16,
+    "strokeWidth": 1.8,
+    "linecap": "round",
+    "filled": false,
+    "grid": "0 0 24 24",
+    "colour": "currentColor"
+  },
+  "customIcons": {
+    "count": 18,
+    "licence": "style_only",
+    "guidance": "Recreate the drawing style with the library above; never copy the SVGs."
+  }
+}

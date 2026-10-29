@@ -6,6 +6,8 @@ export const tmdbImg = {
   poster: (path: string | null) => path ? `${IMG_BASE}/w500${path}` : null,
   backdrop: (path: string | null) => path ? `${IMG_BASE}/w1280${path}` : null,
   profile: (path: string | null) => path ? `${IMG_BASE}/w185${path}` : null,
+  still: (path: string | null) => path ? `${IMG_BASE}/w300${path}` : null,
+  logo: (path: string | null) => path ? `${IMG_BASE}/w200${path}` : null,
 };
 
 const BANNED_TITLES = new Set([
@@ -147,6 +149,26 @@ export interface TmdbVideo {
   official: boolean;
 }
 
+export interface TmdbCrewMember {
+  id: number;
+  name: string;
+  job: string;
+  department?: string;
+  profile_path: string | null;
+}
+
+export interface TmdbProductionCompany {
+  id: number;
+  logo_path: string | null;
+  name: string;
+  origin_country?: string;
+}
+
+export interface TmdbProductionCountry {
+  iso_3166_1: string;
+  name: string;
+}
+
 export interface TmdbDetails {
   id: number;
   title?: string;
@@ -161,9 +183,18 @@ export interface TmdbDetails {
   runtime?: number;
   number_of_seasons?: number;
   seasons?: { season_number: number; name: string; episode_count: number; air_date: string | null }[];
-  credits: { cast: TmdbCastMember[] };
+  credits: {
+    cast: TmdbCastMember[];
+    crew?: TmdbCrewMember[];
+  };
   videos: { results: TmdbVideo[] };
-  created_by?: { name: string }[];
+  created_by?: { name: string; profile_path?: string | null }[];
+  production_companies?: TmdbProductionCompany[];
+  production_countries?: TmdbProductionCountry[];
+  origin_country?: string[];
+  adult?: boolean;
+  tagline?: string;
+  status?: string;
   external_ids?: {
     imdb_id?: string | null;
   };

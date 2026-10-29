@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import FilterBar, { type FilterValues } from "@/components/FilterBar";
@@ -105,6 +106,7 @@ const categories = [
 ];
 
 const Index = () => {
+  const navigate = useNavigate();
   const [selectedTmdbId, setSelectedTmdbId] = useState<{ id: number; type: "movie" | "tv" } | null>(null);
   const [filters, setFilters] = useState<FilterValues>({
     genre: null,
@@ -285,7 +287,7 @@ const Index = () => {
 
   const handleMovieClick = (movie: TmdbMovie) => {
     const type = getMediaType(movie);
-    setSelectedTmdbId({ id: movie.id, type });
+    navigate(`/title/${type}/${movie.id}`);
   };
 
   const filterLabel = useMemo(() => {

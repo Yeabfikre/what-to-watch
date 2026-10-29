@@ -21,43 +21,7 @@ import {
   type TmdbDetails,
 } from "@/lib/tmdb";
 
-export const PROVIDERS = [
-  {
-    name: "MegaCloud",
-    sandbox: false,
-    movie: (id: string) => `https://vidsrc.su/embed/movie/${id}`,
-    tv: (id: string, s?: number, e?: number) =>
-      `https://vidsrc.su/embed/tv/${id}/${s ?? 1}/${e ?? 1}`,
-  },
-  {
-    name: "Videasy",
-    sandbox: false,
-    movie: (id: string) => `https://player.videasy.to/movie/${id}`,
-    tv: (id: string, s?: number, e?: number) =>
-      `https://player.videasy.to/tv/${id}/${s ?? 1}/${e ?? 1}`,
-  },
-  {
-    name: "MultiStream",
-    sandbox: false,
-    movie: (id: string) => `https://www.2embed.cc/embed/${id}`,
-    tv: (id: string, s?: number, e?: number) =>
-      `https://www.2embed.cc/embedtv/${id}&s=${s ?? 1}&e=${e ?? 1}`,
-  },
-  {
-    name: "VidLink",
-    sandbox: false,
-    movie: (id: string) => `https://vidlink.pro/movie/${id}`,
-    tv: (id: string, s?: number, e?: number) =>
-      `https://vidlink.pro/tv/${id}/${s ?? 1}/${e ?? 1}`,
-  },
-  {
-    name: "VidsrcPro",
-    sandbox: false,
-    movie: (id: string) => `https://vidsrc.pm/embed/movie?tmdb=${id}`,
-    tv: (id: string, s?: number, e?: number) =>
-      `https://vidsrc.pm/embed/tv?tmdb=${id}&season=${s ?? 1}&episode=${e ?? 1}`,
-  },
-];
+import { PROVIDERS } from "@/config/providers";
 
 const CopyLinkButton = ({ tmdbId, type, title }: { tmdbId: string; type: string; title: string }) => {
   const [copied, setCopied] = useState(false);

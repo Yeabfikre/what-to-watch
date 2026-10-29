@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Navbar from "@/components/Navbar";
@@ -55,6 +56,7 @@ function ratingToParam(r: string | null): string | undefined {
 }
 
 const Anime = () => {
+  const navigate = useNavigate();
   const [selectedTmdbId, setSelectedTmdbId] = useState<{ id: number; type: "movie" | "tv" } | null>(null);
   const [filters, setFilters] = useState<FilterValues>({ genre: null, country: null, year: null, rating: null, quality: null, sort: "Popularity" });
 
@@ -119,7 +121,7 @@ const Anime = () => {
 
   const handleClick = (movie: TmdbMovie) => {
     const type = getMediaType(movie);
-    setSelectedTmdbId({ id: movie.id, type });
+    navigate(`/title/${type}/${movie.id}`);
   };
 
   const categories = ["All", ...Object.keys(ANIME_GENRES)];

@@ -1,0 +1,24 @@
+[
+  {
+    "family": "Geist Mono",
+    "roles": [
+      "body"
+    ],
+    "licence": "free",
+    "licenceName": "SIL Open Font License (Google Fonts)",
+    "install": "next/font/google (Geist_Mono) or npm i @fontsource-variable/geist-mono",
+    "alternative": null,
+    "note": "Install from Google Fonts or Fontsource, never from the source site."
+  },
+  {
+    "family": "Lufga",
+    "roles": [
+      "display"
+    ],
+    "licence": "style_only",
+    "licenceName": null,
+    "install": null,
+    "alternative": "Inter",
+    "note": "A custom or unidentified typeface. Recreate its feel with the suggested free family."
+  }
+]

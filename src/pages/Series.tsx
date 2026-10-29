@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HeroSpotlight from "@/components/HeroSpotlight";
@@ -83,6 +83,7 @@ function ratingToParam(r: string | null): string | undefined {
 }
 
 const Series = () => {
+  const navigate = useNavigate();
   const { hash } = useLocation();
   const [selectedTmdbId, setSelectedTmdbId] = useState<{ id: number; type: "movie" | "tv" } | null>(null);
   const [filters, setFilters] = useState<FilterValues>({ genre: null, country: null, year: null, rating: null, quality: null, sort: "Popularity" });
@@ -144,7 +145,7 @@ const Series = () => {
 
   const handleSeriesClick = (movie: TmdbMovie) => {
     const type = getMediaType(movie);
-    setSelectedTmdbId({ id: movie.id, type });
+    navigate(`/title/${type}/${movie.id}`);
   };
 
   const categories = ["All", ...Object.keys(TV_GENRES)];

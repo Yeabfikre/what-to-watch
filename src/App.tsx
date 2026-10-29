@@ -13,6 +13,7 @@ import Documentaries from "./pages/Documentaries";
 import News from "./pages/News";
 import NotFound from "./pages/NotFound";
 import Watch from "./pages/Watch";
+import TitleDetails from "./pages/TitleDetails";
 import { ThemeProvider } from "next-themes";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,10 @@ const App = () => (
           <Route path="/documentaries" element={<Documentaries />} />
           <Route path="/news" element={<News />} />
           <Route path="/watch" element={<Watch />} />
+          <Route path="/title/:type/:id" element={<TitleDetails />} />
+          <Route path="/movie/:id" element={<TitleDetails />} />
+          <Route path="/tv/:id" element={<TitleDetails />} />
+          <Route path="/details" element={<TitleDetails />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

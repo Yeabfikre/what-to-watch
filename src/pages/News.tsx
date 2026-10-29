@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
@@ -18,6 +19,7 @@ import {
 } from "@/lib/tmdb";
 
 const News = () => {
+  const navigate = useNavigate();
   const [selectedTmdbId, setSelectedTmdbId] = useState<{ id: number; type: "movie" | "tv" } | null>(null);
 
   const { data: trendingDay = [] } = useQuery({
@@ -72,12 +74,12 @@ const News = () => {
 
   const handleClick = (movie: TmdbMovie) => {
     const type = getMediaType(movie);
-    setSelectedTmdbId({ id: movie.id, type });
+    navigate(`/title/${type}/${movie.id}`);
   };
 
   const handleSearchClick = (movie: TmdbMovie) => {
     const type = getMediaType(movie);
-    setSelectedTmdbId({ id: movie.id, type });
+    navigate(`/title/${type}/${movie.id}`);
   };
 
   const formatDate = (dateStr?: string) => {
