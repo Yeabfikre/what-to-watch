@@ -34,12 +34,14 @@ import { toast } from "@/components/ui/use-toast";
 import Footer from "@/components/Footer";
 import { SeasonsEpisodesDrawer } from "@/components/title-details/SeasonsEpisodesDrawer";
 import { CastAndStudiosSection } from "@/components/title-details/CastAndStudiosSection";
+import { BackgroundTrailer } from "@/components/title-details/BackgroundTrailer";
 import { PROVIDERS, type StreamProvider } from "@/config/providers";
 import {
   tmdbImg,
   getTitle,
   getYear,
   getTrailerUrl,
+  getTrailerKey,
   formatRuntime,
   fetchDetails,
   fetchSeason,
@@ -473,19 +475,13 @@ const TitleDetails = () => {
           ) : (
             /* HERO BANNER WHEN NOT PLAYING */
             <>
-              {/* Background Backdrop Image */}
-              {backdropUrl && !imgError ? (
-                <img
-                  src={backdropUrl}
-                  alt=""
-                  className="absolute inset-0 h-full w-full object-cover object-center scale-105 transition-opacity duration-1000 opacity-90"
-                  onError={() => setImgError(true)}
-                />
-              ) : (
-                <div className="absolute inset-0 flex h-full w-full items-center justify-center bg-gradient-to-br from-zinc-900 to-black">
-                  <Film className="h-24 w-24 text-white/20" />
-                </div>
-              )}
+              {/* Background Video Trailer with Seamless Backdrop Cross-Fade */}
+              <BackgroundTrailer
+                trailerKey={trailerKey}
+                backdropUrl={backdropUrl}
+                title={title}
+                isStreamingFull={isPlaying}
+              />
 
               {/* Gradient Overlays matching phonofilm.cc */}
               <div className="absolute top-0 left-0 h-32 w-full bg-gradient-to-b from-black/90 via-black/40 to-transparent pointer-events-none z-10" />

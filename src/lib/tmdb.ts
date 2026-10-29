@@ -380,7 +380,7 @@ export async function fetchImages(id: number, type: "movie" | "tv") {
 }
 
 // Helper to get trailer YouTube URL
-export function getTrailerUrl(details: TmdbDetails): string | null {
+export function getTrailerKey(details: TmdbDetails): string | null {
   const videos = details.videos?.results || [];
   const trailer =
     // Best: official YouTube Trailer
@@ -391,7 +391,12 @@ export function getTrailerUrl(details: TmdbDetails): string | null {
     videos.find((v) => v.type === "Teaser" && v.site === "YouTube" && v.official) ||
     // Fallback: any YouTube Teaser
     videos.find((v) => v.type === "Teaser" && v.site === "YouTube");
-  return trailer ? `https://www.youtube.com/embed/${trailer.key}` : null;
+  return trailer?.key || null;
+}
+
+export function getTrailerUrl(details: TmdbDetails): string | null {
+  const key = getTrailerKey(details);
+  return key ? `https://www.youtube.com/embed/${key}` : null;
 }
 
 // Helper to format runtime
