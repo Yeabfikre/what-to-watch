@@ -30,11 +30,18 @@ export const PROVIDERS = [
       `https://vidsrc.su/embed/tv/${id}/${s ?? 1}/${e ?? 1}`,
   },
   {
+    name: "Videasy",
+    sandbox: false,
+    movie: (id: string) => `https://player.videasy.to/movie/${id}`,
+    tv: (id: string, s?: number, e?: number) =>
+      `https://player.videasy.to/tv/${id}/${s ?? 1}/${e ?? 1}`,
+  },
+  {
     name: "MultiStream",
     sandbox: false,
-    movie: (id: string) => `https://multiembed.mov/?video_id=${id}&tmdb=1`,
+    movie: (id: string) => `https://www.2embed.cc/embed/${id}`,
     tv: (id: string, s?: number, e?: number) =>
-      `https://multiembed.mov/?video_id=${id}&tmdb=1${s ? `&s=${s}` : ""}${e ? `&e=${e}` : ""}`,
+      `https://www.2embed.cc/embedtv/${id}&s=${s ?? 1}&e=${e ?? 1}`,
   },
   {
     name: "VidLink",
