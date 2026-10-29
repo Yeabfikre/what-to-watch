@@ -263,3 +263,4 @@ export const BackgroundTrailer: React.FC<BackgroundTrailerProps> = ({
 };
 
 export default BackgroundTrailer;
+

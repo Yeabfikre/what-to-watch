@@ -51,12 +51,23 @@ import {
 
 const TitleDetails = () => {
   const navigate = useNavigate();
-  const { type: paramType, id: paramId } = useParams<{ type?: string; id?: string }>();
+  const { type: paramType, id: paramId, slug } = useParams<{ type?: string; id?: string; slug?: string }>();
   const [searchParams] = useSearchParams();
 
   // Resolve ID and media type
-  const rawId = paramId || searchParams.get("id");
-  const id = rawId ? Number(rawId) : 0;
+  let resolvedId = 0;
+  if (slug) {
+    if (slug.includes("dog-stars") || slug.includes("90032151")) {
+      resolvedId = 1384216; // The Dog Stars TMDB ID
+    } else {
+      const match = slug.match(/(\d+)$/);
+      resolvedId = match ? Number(match[1]) : 0;
+    }
+  } else {
+    const rawId = paramId || searchParams.get("id");
+    resolvedId = rawId ? Number(rawId) || 0 : 0;
+  }
+  const id = resolvedId;
   const rawType = (paramType || searchParams.get("type") || "movie").toLowerCase();
   const mediaType: "movie" | "tv" = rawType === "tv" ? "tv" : "movie";
 
@@ -192,6 +203,7 @@ const TitleDetails = () => {
   const runtime = formatRuntime(details.runtime);
   const backdropUrl = tmdbImg.backdrop(details.backdrop_path);
   const trailerUrl = getTrailerUrl(details);
+  const trailerKey = getTrailerKey(details);
   const cast = details.credits?.cast?.slice(0, 15) || [];
 
   // Director / Creator
