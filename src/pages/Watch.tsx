@@ -13,12 +13,14 @@ import {
   ShieldCheck,
   Server,
   ExternalLink,
+  SkipForward,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useStreamFailover } from "@/hooks/useStreamFailover";
 import {
   Dialog,
   DialogContent,
@@ -79,10 +81,26 @@ const Watch = () => {
   const initialEpisode = Math.max(1, Number(params.get("episode")) || 1);
 
   const [loading, setLoading] = useState(true);
-  const [providerIdx, setProviderIdx] = useState(0);
   const [showTrailer, setShowTrailer] = useState(false);
   const [selectedSeason, setSelectedSeason] = useState(initialSeason);
   const [selectedEpisode, setSelectedEpisode] = useState(initialEpisode);
+
+  // Automatic Server Failover Hook
+  const {
+    providerIdx,
+    currentProvider: provider,
+    failedProviders,
+    countdown,
+    playbackConfirmed,
+    autoSwitchEnabled,
+    switchToServer,
+    skipToNextServer,
+    cancelAutoSwitch,
+  } = useStreamFailover({
+    active: !!tmdbId,
+    timeoutSeconds: 8,
+    onServerChange: () => setLoading(true),
+  });
 
   // Sync state if URL searchParams change
   useEffect(() => {
@@ -108,7 +126,6 @@ const Watch = () => {
     enabled: !!tmdbId && isTV,
   });
 
-  const provider = PROVIDERS[providerIdx] || PROVIDERS[0];
   const embedUrl = tmdbId
     ? isTV
       ? provider.tv(tmdbId, selectedSeason, selectedEpisode)
@@ -118,7 +135,7 @@ const Watch = () => {
   const handleSwitchServer = (idx: number) => {
     if (idx === providerIdx) return;
     setLoading(true);
-    setProviderIdx(idx);
+    switchToServer(idx);
   };
 
   const handleEpisodeClick = (epNum: number) => {
@@ -218,11 +235,43 @@ const Watch = () => {
               )}
             </div>
 
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <span className="hidden sm:inline">Server:</span>
-              <span className="font-semibold text-foreground px-2.5 py-0.5 rounded-md bg-secondary border border-border/80">
-                {provider.name}
-              </span>
+            <div className="flex items-center gap-2 text-xs">
+              {/* Failover Status Pill */}
+              {countdown !== null && !playbackConfirmed && autoSwitchEnabled ? (
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/25 text-xs animate-pulse">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
+                  </span>
+                  <span>Auto-check ({countdown}s)</span>
+                  <button
+                    onClick={() => skipToNextServer("User skipped")}
+                    className="ml-1 text-[11px] font-semibold underline hover:text-amber-400 cursor-pointer"
+                    title="Skip to next server immediately"
+                  >
+                    Skip
+                  </button>
+                  <button
+                    onClick={cancelAutoSwitch}
+                    className="text-[11px] text-muted-foreground hover:text-foreground cursor-pointer ml-0.5"
+                    title="Pause auto-switching"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ) : playbackConfirmed ? (
+                <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs">
+                  <Check className="h-3 w-3" />
+                  <span className="hidden sm:inline">Stream Verified</span>
+                </div>
+              ) : null}
+
+              <div className="flex items-center gap-1.5 text-muted-foreground">
+                <span className="hidden sm:inline">Server:</span>
+                <span className="font-semibold text-foreground px-2.5 py-0.5 rounded-md bg-secondary border border-border/80">
+                  {provider.name}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -247,6 +296,7 @@ const Watch = () => {
                   : {})}
                 referrerPolicy="origin"
                 onLoad={() => setLoading(false)}
+                onError={() => skipToNextServer("Iframe network error")}
               />
             ) : (
               <div className="flex h-full flex-col items-center justify-center gap-2 text-muted-foreground p-6 text-center">
@@ -264,20 +314,40 @@ const Watch = () => {
                 <Server className="h-3.5 w-3.5 text-primary" />
                 <span>Servers:</span>
               </div>
-              {PROVIDERS.map((p, idx) => (
-                <button
-                  key={p.name}
-                  onClick={() => handleSwitchServer(idx)}
-                  className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition active:scale-95 cursor-pointer ${
-                    idx === providerIdx
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "border border-border/70 bg-secondary/70 text-foreground hover:bg-secondary"
-                  }`}
-                >
-                  <Play className="h-3 w-3 fill-current" />
-                  <span>{p.name}</span>
-                </button>
-              ))}
+              {PROVIDERS.map((p, idx) => {
+                const isFailed = failedProviders.includes(idx);
+                const isActive = idx === providerIdx;
+                return (
+                  <button
+                    key={p.name}
+                    onClick={() => handleSwitchServer(idx)}
+                    title={isFailed ? `${p.name} (Previously reported issue - click to retry)` : `Switch to ${p.name}`}
+                    className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition active:scale-95 cursor-pointer ${
+                      isActive
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : isFailed
+                        ? "border border-red-500/30 bg-red-500/10 text-muted-foreground hover:bg-red-500/20"
+                        : "border border-border/70 bg-secondary/70 text-foreground hover:bg-secondary"
+                    }`}
+                  >
+                    <Play className="h-3 w-3 fill-current" />
+                    <span>{p.name}</span>
+                    {isFailed && !isActive && (
+                      <span className="text-[10px] text-red-400 font-bold ml-0.5">✕</span>
+                    )}
+                  </button>
+                );
+              })}
+
+              {/* Instant Next Server Action */}
+              <button
+                onClick={() => skipToNextServer("User clicked next server")}
+                className="flex items-center gap-1.5 rounded-lg border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/20 active:scale-95 cursor-pointer transition sm:ml-auto"
+                title="If current server fails to load, move to the next server"
+              >
+                <SkipForward className="h-3.5 w-3.5" />
+                <span>Next Server</span>
+              </button>
             </div>
 
             {/* Quick Actions: Copy Link & Title Details */}

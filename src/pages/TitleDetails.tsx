@@ -22,6 +22,8 @@ import {
   Languages,
   X,
   Server,
+  Check,
+  SkipForward,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
@@ -29,6 +31,7 @@ import { useQuery } from "@tanstack/react-query";
 import { toast } from "@/components/ui/use-toast";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import { useStreamFailover } from "@/hooks/useStreamFailover";
 import { SeasonsEpisodesDrawer } from "@/components/title-details/SeasonsEpisodesDrawer";
 import { CastAndStudiosSection } from "@/components/title-details/CastAndStudiosSection";
 import { BackgroundTrailer } from "@/components/title-details/BackgroundTrailer";
@@ -80,8 +83,23 @@ const TitleDetails = () => {
 
   // Streaming player state
   const [isPlaying, setIsPlaying] = useState(false);
-  const [currentProviderIndex, setCurrentProviderIndex] = useState(0);
   const playerRef = useRef<HTMLDivElement>(null);
+
+  // Automatic Server Failover Hook
+  const {
+    providerIdx: currentProviderIndex,
+    currentProvider,
+    failedProviders,
+    countdown,
+    playbackConfirmed,
+    autoSwitchEnabled,
+    switchToServer: setCurrentProviderIndex,
+    skipToNextServer,
+    cancelAutoSwitch,
+  } = useStreamFailover({
+    active: isPlaying,
+    timeoutSeconds: 8,
+  });
 
   // Fetch full details
   const { data: details, isLoading, error } = useQuery({
@@ -247,7 +265,6 @@ const TitleDetails = () => {
   const seasons = details.seasons?.filter((s) => s.season_number > 0) || [];
 
   // Stream Player helpers
-  const currentProvider: StreamProvider = PROVIDERS[currentProviderIndex] || PROVIDERS[0];
   const streamSrc = isTV
     ? currentProvider.tv(String(details.id), selectedSeason, selectedEpisode)
     : currentProvider.movie(String(details.id));
@@ -355,9 +372,45 @@ const TitleDetails = () => {
                 <span className="text-sm font-semibold truncate max-w-xs sm:max-w-md">
                   {title} {isTV && `· S${selectedSeason} E${selectedEpisode}`}
                 </span>
+                <span className="text-xs px-2.5 py-0.5 rounded-md bg-secondary border border-border/80 font-medium text-foreground">
+                  {currentProvider.name}
+                </span>
               </div>
 
               <div className="flex items-center gap-2">
+                {countdown !== null && !playbackConfirmed && autoSwitchEnabled ? (
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/25 text-xs animate-pulse">
+                    <span>Checking {currentProvider.name} ({countdown}s)...</span>
+                    <button
+                      onClick={() => skipToNextServer("User skipped")}
+                      className="ml-1 font-semibold underline hover:text-amber-400 cursor-pointer"
+                    >
+                      Skip
+                    </button>
+                    <button
+                      onClick={cancelAutoSwitch}
+                      className="text-muted-foreground hover:text-foreground cursor-pointer ml-0.5"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ) : playbackConfirmed ? (
+                  <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs">
+                    <Check className="h-3 w-3" />
+                    <span>Verified</span>
+                  </div>
+                ) : null}
+
+                <button
+                  type="button"
+                  onClick={() => skipToNextServer("User clicked next")}
+                  className="flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary transition hover:bg-primary/20 cursor-pointer"
+                  title="Move to next server"
+                >
+                  <SkipForward className="h-3.5 w-3.5" />
+                  <span>Next Server</span>
+                </button>
+
                 <button
                   type="button"
                   onClick={() => setIsPlaying(false)}
@@ -378,6 +431,7 @@ const TitleDetails = () => {
                 className="h-full w-full border-0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
+                onError={() => skipToNextServer("Iframe network error")}
               />
             </div>
 
@@ -387,20 +441,30 @@ const TitleDetails = () => {
                 <Server className="h-3.5 w-3.5 text-primary" />
                 <span>Servers:</span>
               </div>
-              {PROVIDERS.map((provider, idx) => (
-                <button
-                  key={provider.name}
-                  type="button"
-                  onClick={() => setCurrentProviderIndex(idx)}
-                  className={`rounded-full px-4 py-1.5 text-xs font-bold transition active:scale-95 cursor-pointer ${
-                    currentProviderIndex === idx
-                      ? "bg-primary text-primary-foreground shadow-[0_4px_12px_rgba(37,99,235,0.35)]"
-                      : "border border-border bg-secondary text-secondary-foreground hover:bg-muted"
-                  }`}
-                >
-                  {provider.name}
-                </button>
-              ))}
+              {PROVIDERS.map((provider, idx) => {
+                const isFailed = failedProviders.includes(idx);
+                const isActive = currentProviderIndex === idx;
+                return (
+                  <button
+                    key={provider.name}
+                    type="button"
+                    onClick={() => setCurrentProviderIndex(idx)}
+                    title={isFailed ? `${provider.name} (Previously reported issue - click to retry)` : `Switch to ${provider.name}`}
+                    className={`rounded-full px-4 py-1.5 text-xs font-bold transition active:scale-95 cursor-pointer ${
+                      isActive
+                        ? "bg-primary text-primary-foreground shadow-[0_4px_12px_rgba(37,99,235,0.35)]"
+                        : isFailed
+                        ? "border border-red-500/30 bg-red-500/10 text-muted-foreground hover:bg-red-500/20"
+                        : "border border-border bg-secondary text-secondary-foreground hover:bg-muted"
+                    }`}
+                  >
+                    <span>{provider.name}</span>
+                    {isFailed && !isActive && (
+                      <span className="text-[10px] text-red-400 font-bold ml-1">✕</span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
           ) : (
