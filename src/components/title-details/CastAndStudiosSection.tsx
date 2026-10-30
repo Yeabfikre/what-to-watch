@@ -18,20 +18,20 @@ export const CastAndStudiosSection: React.FC<CastAndStudiosSectionProps> = ({
   studios,
 }) => {
   return (
-    <div className="space-y-12 pt-6 border-t border-white/10">
+    <div className="space-y-12 pt-6 border-t border-border">
       {/* Row 1: Director & Studios Side by Side */}
       <div className="grid gap-10 md:grid-cols-2">
         {/* Director / Creator */}
         <div>
           <div className="mb-4 flex items-center gap-2 border-b border-border/50 pb-2">
-            <div className="h-4 w-1 rounded-full bg-[#f5f2ea]" />
-            <h2 className="text-base font-semibold text-[#f5f2ea]">
+            <div className="h-4 w-1 rounded-full bg-primary" />
+            <h2 className="text-base font-semibold text-foreground">
               {isTV ? "Creator" : "Director"}
             </h2>
           </div>
 
           <div className="flex flex-col items-start">
-            <div className="h-28 w-28 sm:h-32 sm:w-32 overflow-hidden rounded-3xl bg-[#161513] ring-1 ring-[#2e2a26] relative shadow-md">
+            <div className="h-28 w-28 sm:h-32 sm:w-32 overflow-hidden rounded-3xl bg-card ring-1 ring-border relative shadow-sm">
               {directorPhoto ? (
                 <img
                   src={directorPhoto}
@@ -40,15 +40,15 @@ export const CastAndStudiosSection: React.FC<CastAndStudiosSectionProps> = ({
                   loading="lazy"
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center bg-zinc-800">
-                  <User className="h-10 w-10 text-white/40" />
+                <div className="flex h-full w-full items-center justify-center bg-muted">
+                  <User className="h-10 w-10 text-muted-foreground" />
                 </div>
               )}
             </div>
-            <h4 className="mt-2.5 text-sm sm:text-base font-bold text-[#f5f2ea]">
+            <h4 className="mt-2.5 text-sm sm:text-base font-bold text-foreground">
               {directorName}
             </h4>
-            <p className="text-xs text-[#b7b7b6]">
+            <p className="text-xs text-muted-foreground">
               {isTV ? "Creator" : "Director"}
             </p>
           </div>
@@ -57,8 +57,8 @@ export const CastAndStudiosSection: React.FC<CastAndStudiosSectionProps> = ({
         {/* Studios */}
         <div>
           <div className="mb-4 flex items-center gap-2 border-b border-border/50 pb-2">
-            <div className="h-4 w-1 rounded-full bg-[#f5f2ea]" />
-            <h2 className="text-base font-semibold text-[#f5f2ea]">Studios</h2>
+            <div className="h-4 w-1 rounded-full bg-primary" />
+            <h2 className="text-base font-semibold text-foreground">Studios</h2>
           </div>
 
           <div className="space-y-3">
@@ -68,9 +68,9 @@ export const CastAndStudiosSection: React.FC<CastAndStudiosSectionProps> = ({
                 return (
                   <div
                     key={company.id}
-                    className="flex items-center gap-3.5 rounded-2xl bg-[#161513] border border-[#2e2a26] p-2.5 pr-4 transition-colors hover:bg-secondary/40 shadow-sm"
+                    className="flex items-center gap-3.5 rounded-2xl bg-card border border-border p-2.5 pr-4 transition-colors hover:bg-secondary/60 shadow-sm"
                   >
-                    <div className="flex h-11 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white p-1.5">
+                    <div className="flex h-11 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white dark:bg-zinc-900 border border-border/40 p-1.5">
                       {logoUrl ? (
                         <img
                           src={logoUrl}
@@ -79,21 +79,21 @@ export const CastAndStudiosSection: React.FC<CastAndStudiosSectionProps> = ({
                           loading="lazy"
                         />
                       ) : (
-                        <Building2 className="h-5 w-5 text-zinc-800" />
+                        <Building2 className="h-5 w-5 text-muted-foreground" />
                       )}
                     </div>
-                    <div className="line-clamp-1 text-sm font-semibold text-[#f5f2ea]">
+                    <div className="line-clamp-1 text-sm font-semibold text-foreground">
                       {company.name}
                     </div>
                   </div>
                 );
               })
             ) : (
-              <div className="flex items-center gap-3.5 rounded-2xl bg-[#161513] border border-[#2e2a26] p-2.5 pr-4">
-                <div className="flex h-11 w-16 shrink-0 items-center justify-center rounded-xl bg-white p-1.5">
-                  <Film className="h-5 w-5 text-zinc-800" />
+              <div className="flex items-center gap-3.5 rounded-2xl bg-card border border-border p-2.5 pr-4">
+                <div className="flex h-11 w-16 shrink-0 items-center justify-center rounded-xl bg-white dark:bg-zinc-900 border border-border/40 p-1.5">
+                  <Film className="h-5 w-5 text-muted-foreground" />
                 </div>
-                <div className="line-clamp-1 text-sm font-semibold text-[#f5f2ea]">
+                <div className="line-clamp-1 text-sm font-semibold text-foreground">
                   Independent Production
                 </div>
               </div>
@@ -105,8 +105,8 @@ export const CastAndStudiosSection: React.FC<CastAndStudiosSectionProps> = ({
       {/* Row 2: Full Width Actors Grid */}
       <section>
         <div className="mb-6 flex items-center gap-2 border-b border-border/50 pb-2">
-          <div className="h-4 w-1 rounded-full bg-[#f5f2ea]" />
-          <h2 className="text-base font-semibold text-[#f5f2ea]">Actors</h2>
+          <div className="h-4 w-1 rounded-full bg-primary" />
+          <h2 className="text-base font-semibold text-foreground">Actors</h2>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3.5">
@@ -114,7 +114,7 @@ export const CastAndStudiosSection: React.FC<CastAndStudiosSectionProps> = ({
             const photoUrl = tmdbImg.profile(actor.profile_path);
             return (
               <div key={actor.id} className="group block">
-                <div className="aspect-square overflow-hidden rounded-3xl bg-[#161513] ring-1 ring-[#2e2a26] transition-shadow group-hover:ring-white/30 relative shadow-sm">
+                <div className="aspect-square overflow-hidden rounded-3xl bg-card ring-1 ring-border transition-all group-hover:ring-primary/60 group-hover:shadow-md relative shadow-sm">
                   {photoUrl ? (
                     <img
                       src={photoUrl}
@@ -123,15 +123,15 @@ export const CastAndStudiosSection: React.FC<CastAndStudiosSectionProps> = ({
                       loading="lazy"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-zinc-800">
-                      <User className="h-10 w-10 text-white/40" />
+                    <div className="flex h-full w-full items-center justify-center bg-muted">
+                      <User className="h-10 w-10 text-muted-foreground" />
                     </div>
                   )}
                 </div>
-                <div className="mt-2 line-clamp-1 text-sm font-semibold text-[#f5f2ea] group-hover:text-[#e8a13a]">
+                <div className="mt-2 line-clamp-1 text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
                   {actor.name}
                 </div>
-                <div className="mt-0.5 text-xs text-[#b7b7b6]">Actor</div>
+                <div className="mt-0.5 text-xs text-muted-foreground">Actor</div>
               </div>
             );
           })}

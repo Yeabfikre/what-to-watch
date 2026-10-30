@@ -28,10 +28,11 @@ import {
   Server,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "@/components/ui/use-toast";
 import Footer from "@/components/Footer";
+import ThemeToggle from "@/components/ThemeToggle";
 import { SeasonsEpisodesDrawer } from "@/components/title-details/SeasonsEpisodesDrawer";
 import { CastAndStudiosSection } from "@/components/title-details/CastAndStudiosSection";
 import { BackgroundTrailer } from "@/components/title-details/BackgroundTrailer";
@@ -365,124 +366,120 @@ const TitleDetails = () => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#0e0e0d] text-[#f5f2ea] flex flex-col selection:bg-[#e8a13a]/30">
+    <div className="min-h-screen w-full bg-background text-foreground flex flex-col selection:bg-primary/30">
       {/* ======================================================== */}
       {/* HERO SECTION CONTAINER (Edge-to-edge What to Watch Flow)  */}
       {/* ======================================================== */}
-      <div className="relative flex w-full flex-col overflow-hidden bg-black border-b border-[#2e2a26] min-h-[520px] md:min-h-[660px]">
+      <div className="relative flex w-full flex-col overflow-hidden bg-black border-b border-border min-h-[520px] md:min-h-[660px]">
         {/* Top navigation bar */}
         <div className="relative z-30 w-full px-4 pt-4 sm:px-6 sm:pt-6 md:px-8">
           <div className="max-w-7xl mx-auto flex w-full items-center justify-between gap-3 sm:gap-6">
-              {/* Left: Back & Home controls */}
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => navigate(-1)}
-                  aria-label="Back"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-md transition-colors hover:bg-black/60 active:scale-95"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigate("/")}
-                  aria-label="Home"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-md transition-colors hover:bg-black/60 active:scale-95"
-                >
-                  <Home className="h-4 w-4" />
-                </button>
-              </div>
-
-              {/* Center: Search Bar */}
-              <form onSubmit={handleSearchSubmit} className="relative flex-1 max-w-md mx-2 sm:mx-4 hidden sm:block">
-                <div className="relative flex items-center">
-                  <Search className="absolute left-4 h-4 w-4 text-white/60 pointer-events-none" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search Movies"
-                    className="w-full rounded-full bg-white/10 border border-white/10 py-2.5 pl-11 pr-4 text-xs sm:text-sm text-[#f5f2ea] placeholder-neutral-400 backdrop-blur-md outline-none transition focus:border-white/25 focus:bg-white/15"
-                  />
-                </div>
-              </form>
-
-              {/* Right: Me user pill & Audio/Mute toggle */}
-              <div className="flex items-center gap-2">
-                <div className="flex h-10 items-center justify-center gap-1.5 rounded-full bg-[#f5f2ea] px-4 text-[#0e0e0d] font-semibold text-xs backdrop-blur-md shadow-sm">
-                  <User className="h-3.5 w-3.5" />
-                  <span>Me</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setIsMuted(!isMuted)}
-                  aria-label={isMuted ? "Unmute" : "Mute"}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-md transition-colors hover:bg-black/60 active:scale-95"
-                >
-                  {isMuted ? <VolumeX className="h-4 w-4 text-red-400" /> : <Volume2 className="h-4 w-4" />}
-                </button>
-              </div>
+            {/* Left: Back button & WTW Brand */}
+            <div className="flex items-center gap-2 sm:gap-3">
+              <button
+                type="button"
+                onClick={() => navigate(-1)}
+                aria-label="Back"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-md transition-colors hover:bg-black/60 active:scale-95 cursor-pointer"
+              >
+                <ArrowLeft className="h-4 w-4" />
+              </button>
+              <Link to="/" className="flex items-center gap-2">
+                <img src="/apple-touch-icon.png" alt="WTW" className="h-7 w-7 rounded-md hidden sm:block" />
+                <span className="text-sm sm:text-base font-bold tracking-tight text-white drop-shadow">
+                  <span className="text-primary font-extrabold">WTW</span>
+                  <span className="hidden md:inline text-white/90"> : What To Watch</span>
+                </span>
+              </Link>
             </div>
-          </div>
 
-          {/* STREAMING PLAYER INTEGRATION (When Playing) */}
-          {isPlaying ? (
-            <div ref={playerRef} className="relative z-20 w-full max-w-7xl mx-auto px-4 py-6 sm:px-6 md:px-8 flex flex-col justify-center flex-1">
-              {/* Player Top Controller Bar */}
-              <div className="flex flex-wrap items-center justify-between gap-3 mb-4 bg-[#161513]/90 border border-[#2e2a26] p-3 rounded-2xl backdrop-blur-md">
-                <div className="flex items-center gap-2.5">
-                  <span className="w-1.5 h-4 bg-[#e8a13a] rounded-full inline-block" />
-                  <span className="text-sm font-semibold text-[#f5f2ea] truncate max-w-xs sm:max-w-md">
-                    {title} {isTV && `· S${selectedSeason} E${selectedEpisode}`}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setIsPlaying(false)}
-                    className="flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-white/20"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                    <span>Close Player</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Streaming Iframe Container */}
-              <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-[#2e2a26] bg-black shadow-2xl">
-                <iframe
-                  key={`${currentProvider.name}-${details.id}-${selectedSeason}-${selectedEpisode}`}
-                  src={streamSrc}
-                  title={`${title} Streaming Player`}
-                  className="h-full w-full border-0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
+            {/* Center: Search Bar */}
+            <form onSubmit={handleSearchSubmit} className="relative flex-1 max-w-md mx-2 sm:mx-4 hidden sm:block">
+              <div className="relative flex items-center">
+                <Search className="absolute left-4 h-4 w-4 text-white/60 pointer-events-none" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search Movies & Shows..."
+                  className="w-full rounded-full bg-white/10 border border-white/15 py-2.5 pl-11 pr-4 text-xs sm:text-sm text-white placeholder-white/50 backdrop-blur-md outline-none transition focus:border-primary focus:bg-white/15"
                 />
               </div>
+            </form>
 
-              {/* Server Switcher Bar */}
-              <div className="mt-4 flex flex-wrap items-center gap-2 justify-center bg-[#161513]/80 border border-[#2e2a26] p-3 rounded-2xl">
-                <div className="flex items-center gap-1.5 text-xs text-[#b7b7b6] mr-2">
-                  <Server className="h-3.5 w-3.5 text-[#e8a13a]" />
-                  <span>Servers:</span>
-                </div>
-                {PROVIDERS.map((provider, idx) => (
-                  <button
-                    key={provider.name}
-                    type="button"
-                    onClick={() => setCurrentProviderIndex(idx)}
-                    className={`rounded-full px-4 py-1.5 text-xs font-bold transition active:scale-95 ${
-                      currentProviderIndex === idx
-                        ? "bg-[#e8a13a] text-[#0e0e0d] shadow-[0_4px_12px_rgba(232,161,58,0.35)]"
-                        : "border border-white/15 bg-white/[0.07] text-[#f5f2ea] hover:bg-white/[0.12]"
-                    }`}
-                  >
-                    {provider.name}
-                  </button>
-                ))}
+            {/* Right: ThemeToggle & Audio/Mute toggle */}
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <button
+                type="button"
+                onClick={() => setIsMuted(!isMuted)}
+                aria-label={isMuted ? "Unmute" : "Mute"}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-md transition-colors hover:bg-black/60 active:scale-95 cursor-pointer"
+              >
+                {isMuted ? <VolumeX className="h-4 w-4 text-red-400" /> : <Volume2 className="h-4 w-4" />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* STREAMING PLAYER INTEGRATION (When Playing) */}
+        {isPlaying ? (
+          <div ref={playerRef} className="relative z-20 w-full max-w-7xl mx-auto px-4 py-6 sm:px-6 md:px-8 flex flex-col justify-center flex-1">
+            {/* Player Top Controller Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-4 bg-card/90 border border-border p-3 rounded-2xl backdrop-blur-md text-card-foreground shadow-lg">
+              <div className="flex items-center gap-2.5">
+                <span className="w-1.5 h-4 bg-primary rounded-full inline-block" />
+                <span className="text-sm font-semibold truncate max-w-xs sm:max-w-md">
+                  {title} {isTV && `· S${selectedSeason} E${selectedEpisode}`}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsPlaying(false)}
+                  className="flex items-center gap-1.5 rounded-full border border-border bg-secondary/80 px-3 py-1.5 text-xs font-semibold text-foreground transition hover:bg-secondary cursor-pointer"
+                >
+                  <X className="h-3.5 w-3.5" />
+                  <span>Close Player</span>
+                </button>
               </div>
             </div>
+
+            {/* Streaming Iframe Container */}
+            <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-border bg-black shadow-2xl">
+              <iframe
+                key={`${currentProvider.name}-${details.id}-${selectedSeason}-${selectedEpisode}`}
+                src={streamSrc}
+                title={`${title} Streaming Player`}
+                className="h-full w-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+
+            {/* Server Switcher Bar */}
+            <div className="mt-4 flex flex-wrap items-center gap-2 justify-center bg-card/85 border border-border p-3 rounded-2xl shadow-lg">
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground mr-2 font-medium">
+                <Server className="h-3.5 w-3.5 text-primary" />
+                <span>Servers:</span>
+              </div>
+              {PROVIDERS.map((provider, idx) => (
+                <button
+                  key={provider.name}
+                  type="button"
+                  onClick={() => setCurrentProviderIndex(idx)}
+                  className={`rounded-full px-4 py-1.5 text-xs font-bold transition active:scale-95 cursor-pointer ${
+                    currentProviderIndex === idx
+                      ? "bg-primary text-primary-foreground shadow-[0_4px_12px_rgba(37,99,235,0.35)]"
+                      : "border border-border bg-secondary text-secondary-foreground hover:bg-muted"
+                  }`}
+                >
+                  {provider.name}
+                </button>
+              ))}
+            </div>
+          </div>
           ) : (
             /* HERO BANNER WHEN NOT PLAYING */
             <>
@@ -518,7 +515,7 @@ const TitleDetails = () => {
                   </span>
 
                   <span className="flex items-center gap-1 font-semibold text-white">
-                    <Star className="h-3.5 w-3.5 fill-[#e8a13a] text-[#e8a13a]" />
+                    <Star className="h-3.5 w-3.5 fill-gold text-gold" />
                     <span>{(details.vote_average || 0).toFixed(1)}</span>
                   </span>
 
@@ -560,9 +557,9 @@ const TitleDetails = () => {
                     <button
                       type="button"
                       onClick={handleStartStreaming}
-                      className="flex h-11 sm:h-12 min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-white px-6 sm:px-8 text-sm font-bold whitespace-nowrap text-black shadow-[0_10px_28px_rgba(255,255,255,0.18)] transition-transform hover:bg-white/90 active:scale-[0.98] cursor-pointer"
+                      className="flex h-11 sm:h-12 min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-primary px-6 sm:px-8 text-sm font-bold whitespace-nowrap text-primary-foreground shadow-[0_10px_28px_rgba(37,99,235,0.35)] transition-transform hover:bg-primary/90 active:scale-[0.98] cursor-pointer"
                     >
-                      <Crown className="h-4 w-4 fill-[#e8a13a] text-[#e8a13a]" />
+                      <Play className="h-4 w-4 fill-current ml-0.5" />
                       <span>Stream</span>
                     </button>
 
@@ -570,7 +567,7 @@ const TitleDetails = () => {
                     <button
                       type="button"
                       onClick={handleDownload}
-                      className="flex h-11 sm:h-12 min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-[#e8a13a] px-6 sm:px-8 text-sm font-bold whitespace-nowrap text-[#0e0e0d] shadow-[0_10px_28px_rgba(232,161,58,0.28)] transition-transform hover:bg-[#e8a13a]/90 active:scale-[0.98] cursor-pointer"
+                      className="flex h-11 sm:h-12 min-w-0 flex-1 items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-6 sm:px-8 text-sm font-bold whitespace-nowrap text-white backdrop-blur-md transition-colors hover:bg-white/20 active:scale-[0.98] cursor-pointer"
                     >
                       <Download className="h-4 w-4" />
                       <span>Download</span>
@@ -581,7 +578,7 @@ const TitleDetails = () => {
                       <button
                         type="button"
                         onClick={() => setShowTrailer(!showTrailer)}
-                        className="flex h-11 sm:h-12 min-w-0 flex-1 items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.07] px-5 text-sm font-semibold whitespace-nowrap text-white backdrop-blur-md transition-colors hover:bg-white/[0.12] active:scale-[0.98] cursor-pointer"
+                        className="flex h-11 sm:h-12 min-w-0 flex-1 items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.08] px-5 text-sm font-semibold whitespace-nowrap text-white backdrop-blur-md transition-colors hover:bg-white/[0.15] active:scale-[0.98] cursor-pointer"
                       >
                         <span className="flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-white">
                           <Play className="h-2 w-2 fill-current ml-0.5" />
@@ -597,10 +594,10 @@ const TitleDetails = () => {
                       className={`hidden sm:flex h-11 sm:h-12 min-w-0 flex-1 items-center justify-center gap-2 rounded-full border px-5 text-sm font-semibold whitespace-nowrap text-white backdrop-blur-md transition-colors active:scale-[0.98] cursor-pointer ${
                         showSimilar
                           ? "bg-white text-black border-white"
-                          : "border-white/15 bg-white/[0.07] hover:bg-white/[0.12]"
+                          : "border-white/15 bg-white/[0.08] hover:bg-white/[0.15]"
                       }`}
                     >
-                      <Sparkles className="h-4 w-4 text-[#e8a13a]" />
+                      <Sparkles className="h-4 w-4 text-primary" />
                       <span>Similar</span>
                     </button>
                   </div>
@@ -615,7 +612,7 @@ const TitleDetails = () => {
                           "Subtitles in English, Spanish, Arabic, French, German, and 20+ languages available inside player.",
                       })
                     }
-                    className="flex h-11 sm:h-12 w-full sm:w-auto sm:self-start items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.07] pr-3 pl-4 sm:pr-4 sm:pl-5 text-sm font-semibold whitespace-nowrap text-white backdrop-blur-md transition-colors hover:bg-white/[0.12] active:scale-[0.99] cursor-pointer"
+                    className="flex h-11 sm:h-12 w-full sm:w-auto sm:self-start items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.08] pr-3 pl-4 sm:pr-4 sm:pl-5 text-sm font-semibold whitespace-nowrap text-white backdrop-blur-md transition-colors hover:bg-white/[0.15] active:scale-[0.99] cursor-pointer"
                   >
                     <Languages className="h-4 w-4 text-white/70" />
                     <span>Subtitles</span>
@@ -638,7 +635,7 @@ const TitleDetails = () => {
                       onClick={handleToggleWatchlist}
                       className={`flex flex-col items-center justify-center gap-1 rounded-2xl border py-2 backdrop-blur-md transition-all active:scale-[0.95] ${
                         isInWatchlist
-                          ? "border-[#e8a13a] bg-[#e8a13a]/20 text-[#e8a13a]"
+                          ? "border-primary bg-primary/20 text-primary"
                           : "border-white/12 bg-white/[0.06] text-white/85"
                       }`}
                     >
@@ -698,7 +695,7 @@ const TitleDetails = () => {
                       onClick={handleToggleWatchlist}
                       className={`flex h-10 items-center justify-center gap-1.5 rounded-full border px-4 text-xs font-semibold backdrop-blur-md transition-colors active:scale-[0.97] cursor-pointer ${
                         isInWatchlist
-                          ? "border-[#e8a13a] bg-[#e8a13a]/20 text-[#e8a13a]"
+                          ? "border-primary bg-primary/20 text-primary"
                           : "border-white/15 bg-white/[0.06] text-white/85 hover:border-white/25 hover:bg-white/10"
                       }`}
                     >
@@ -766,23 +763,23 @@ const TitleDetails = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="w-full bg-[#161513] border-y border-[#2e2a26] py-8 px-4 sm:px-8"
+            className="w-full bg-card border-y border-border py-8 px-4 sm:px-8 text-card-foreground"
           >
             <div className="max-w-5xl mx-auto">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <span className="w-1.5 h-4 bg-red-600 rounded-full inline-block" />
-                  <h3 className="text-base font-bold text-white">Official Trailer</h3>
+                  <h3 className="text-base font-bold text-foreground">Official Trailer</h3>
                 </div>
                 <button
                   type="button"
                   onClick={() => setShowTrailer(false)}
-                  className="text-xs text-[#b7b7b6] hover:text-white"
+                  className="text-xs text-muted-foreground hover:text-foreground cursor-pointer"
                 >
                   Close Trailer
                 </button>
               </div>
-              <div className="aspect-video w-full overflow-hidden rounded-2xl border border-[#2e2a26] shadow-2xl bg-black">
+              <div className="aspect-video w-full overflow-hidden rounded-2xl border border-border shadow-2xl bg-black">
                 <iframe
                   src={`${trailerUrl}?autoplay=1&rel=0&playsinline=1&enablejsapi=1${isMuted ? "&mute=1" : ""}`}
                   title={`${title} Official Trailer`}
@@ -805,18 +802,18 @@ const TitleDetails = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="w-full bg-[#161513] border-y border-[#2e2a26] py-8 px-4 sm:px-8"
+            className="w-full bg-card border-y border-border py-8 px-4 sm:px-8 text-card-foreground"
           >
             <div className="max-w-7xl mx-auto">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <span className="w-1.5 h-4 bg-[#e8a13a] rounded-full inline-block" />
-                  <h3 className="text-base font-bold text-white">Similar Recommendations</h3>
+                  <span className="w-1.5 h-4 bg-primary rounded-full inline-block" />
+                  <h3 className="text-base font-bold text-foreground">Similar Recommendations</h3>
                 </div>
                 <button
                   type="button"
                   onClick={() => setShowSimilar(false)}
-                  className="text-xs text-[#b7b7b6] hover:text-white"
+                  className="text-xs text-muted-foreground hover:text-foreground cursor-pointer"
                 >
                   Close
                 </button>
@@ -830,7 +827,7 @@ const TitleDetails = () => {
                       onClick={() => navigate(`/title/${isTV ? "tv" : "movie"}/${sim.id}`)}
                       className="w-36 shrink-0 text-left group cursor-pointer focus:outline-none"
                     >
-                      <div className="aspect-[2/3] w-full overflow-hidden rounded-2xl bg-[#161513] border border-[#2e2a26] group-hover:scale-105 transition-transform duration-200">
+                      <div className="aspect-[2/3] w-full overflow-hidden rounded-2xl bg-secondary border border-border group-hover:scale-105 group-hover:border-primary/50 transition-all duration-200">
                         {sim.poster_path ? (
                           <img
                             src={tmdbImg.poster(sim.poster_path) || ""}
@@ -840,18 +837,18 @@ const TitleDetails = () => {
                           />
                         ) : (
                           <div className="flex h-full w-full items-center justify-center">
-                            <Film className="h-8 w-8 text-white/30" />
+                            <Film className="h-8 w-8 text-muted-foreground" />
                           </div>
                         )}
                       </div>
-                      <p className="mt-2 text-xs font-semibold text-[#f5f2ea] truncate group-hover:text-[#e8a13a]">
+                      <p className="mt-2 text-xs font-semibold text-foreground truncate group-hover:text-primary transition-colors">
                         {getTitle(sim)}
                       </p>
-                      <p className="text-[11px] text-[#b7b7b6]">{getYear(sim) || "Recent"}</p>
+                      <p className="text-[11px] text-muted-foreground">{getYear(sim) || "Recent"}</p>
                     </button>
                   ))
                 ) : (
-                  <p className="text-xs text-[#b7b7b6] py-4">Loading similar titles...</p>
+                  <p className="text-xs text-muted-foreground py-4">Loading similar titles...</p>
                 )}
               </div>
             </div>
@@ -863,34 +860,34 @@ const TitleDetails = () => {
       {/* MAIN CONTENT AREA: METADATA & ACTORS & STUDIOS          */}
       {/* ======================================================== */}
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 py-8 space-y-10">
-        {/* METADATA DEFINITION ROWS (phonofilm.cc 03-div.html) */}
+        {/* METADATA DEFINITION ROWS */}
         <div className="space-y-3.5">
           <div className="flex items-baseline gap-3 md:gap-4">
-            <span className="w-36 shrink-0 text-[10px] font-semibold tracking-[0.18em] text-[#b7b7b6] uppercase">
+            <span className="w-36 shrink-0 text-[10px] font-semibold tracking-[0.18em] text-muted-foreground uppercase">
               Parental rating
             </span>
-            <span className="text-sm font-semibold text-white/90">{parentalRating}</span>
+            <span className="text-sm font-semibold text-foreground">{parentalRating}</span>
           </div>
 
           <div className="flex gap-3 md:gap-4">
-            <span className="w-36 shrink-0 pt-0.5 text-[10px] font-semibold tracking-[0.18em] text-[#b7b7b6] uppercase">
+            <span className="w-36 shrink-0 pt-0.5 text-[10px] font-semibold tracking-[0.18em] text-muted-foreground uppercase">
               Audience
             </span>
-            <p className="text-sm leading-relaxed text-white/75">{audience}</p>
+            <p className="text-sm leading-relaxed text-foreground/85">{audience}</p>
           </div>
 
           <div className="flex gap-3 md:gap-4">
-            <span className="w-36 shrink-0 pt-0.5 text-[10px] font-semibold tracking-[0.18em] text-[#b7b7b6] uppercase">
+            <span className="w-36 shrink-0 pt-0.5 text-[10px] font-semibold tracking-[0.18em] text-muted-foreground uppercase">
               Tags
             </span>
-            <p className="line-clamp-2 text-sm leading-relaxed text-white/70">{tagsList}</p>
+            <p className="line-clamp-2 text-sm leading-relaxed text-foreground/80">{tagsList}</p>
           </div>
 
           <div className="flex gap-3 md:gap-4">
-            <span className="w-36 shrink-0 pt-0.5 text-[10px] font-semibold tracking-[0.18em] text-[#b7b7b6] uppercase">
+            <span className="w-36 shrink-0 pt-0.5 text-[10px] font-semibold tracking-[0.18em] text-muted-foreground uppercase">
               Country of origin
             </span>
-            <p className="text-sm leading-relaxed text-white/70">{countryOfOrigin}</p>
+            <p className="text-sm leading-relaxed text-foreground/80">{countryOfOrigin}</p>
           </div>
         </div>
 

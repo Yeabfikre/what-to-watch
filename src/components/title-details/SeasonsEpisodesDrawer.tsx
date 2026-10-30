@@ -43,11 +43,11 @@ export const SeasonsEpisodesDrawer: React.FC<SeasonsEpisodesDrawerProps> = ({
   if (!isTV || !seasons || seasons.length === 0) return null;
 
   return (
-    <section className="mt-8 border-t border-white/10 pt-6">
+    <section className="mt-8 border-t border-border pt-6">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <div className="flex items-center gap-2">
-          <span className="h-4 w-1 rounded-full bg-[#f5f2ea]" />
-          <h2 className="text-base font-semibold text-[#f5f2ea]">Seasons &amp; episodes</h2>
+          <span className="h-4 w-1 rounded-full bg-primary" />
+          <h2 className="text-base font-semibold text-foreground">Seasons &amp; episodes</h2>
         </div>
 
         {seasons.length > 1 && (
@@ -58,15 +58,15 @@ export const SeasonsEpisodesDrawer: React.FC<SeasonsEpisodesDrawerProps> = ({
                 setSelectedSeason(Number(e.target.value));
                 setSelectedEpisode(1);
               }}
-              className="appearance-none rounded-xl border border-[#2e2a26] bg-[#161513] px-4 py-2 pr-9 text-xs font-semibold text-[#f5f2ea] outline-none transition hover:border-white/30"
+              className="appearance-none rounded-xl border border-border bg-card px-4 py-2 pr-9 text-xs font-semibold text-foreground outline-none transition hover:border-primary/50 shadow-sm"
             >
               {seasons.map((s) => (
-                <option key={s.season_number} value={s.season_number} className="bg-zinc-900 text-white">
+                <option key={s.season_number} value={s.season_number} className="bg-card text-card-foreground">
                   {s.name} ({s.episode_count} ep)
                 </option>
               ))}
             </select>
-            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-white/60" />
+            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
           </div>
         )}
       </div>
@@ -80,13 +80,13 @@ export const SeasonsEpisodesDrawer: React.FC<SeasonsEpisodesDrawerProps> = ({
               type="button"
               key={ep.id}
               onClick={() => onSelectEpisode(ep.episode_number)}
-              className={`flex gap-3.5 rounded-2xl border p-3 text-left transition active:scale-[0.99] cursor-pointer group focus:outline-none ${
+              className={`flex gap-3.5 rounded-2xl border p-3 text-left transition active:scale-[0.99] cursor-pointer group focus:outline-none shadow-sm ${
                 isCurrent
-                  ? "border-[#e8a13a] bg-[#e8a13a]/10"
-                  : "border-[#2e2a26] bg-[#161513] hover:border-white/20 hover:bg-white/[0.04]"
+                  ? "border-primary bg-primary/10 ring-1 ring-primary/40"
+                  : "border-border bg-card hover:border-primary/40 hover:bg-secondary/40"
               }`}
             >
-              <div className="h-18 w-28 shrink-0 overflow-hidden rounded-xl bg-secondary relative">
+              <div className="h-18 w-28 shrink-0 overflow-hidden rounded-xl bg-muted relative border border-border/50">
                 {stillUrl ? (
                   <img
                     src={stillUrl}
@@ -96,7 +96,7 @@ export const SeasonsEpisodesDrawer: React.FC<SeasonsEpisodesDrawerProps> = ({
                   />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center">
-                    <Tv className="h-6 w-6 text-white/30" />
+                    <Tv className="h-6 w-6 text-muted-foreground" />
                   </div>
                 )}
                 <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -104,14 +104,14 @@ export const SeasonsEpisodesDrawer: React.FC<SeasonsEpisodesDrawerProps> = ({
                 </div>
               </div>
               <div className="flex-1 min-w-0 flex flex-col justify-center">
-                <p className="text-xs sm:text-sm font-semibold text-[#f5f2ea] truncate group-hover:text-[#e8a13a]">
+                <p className="text-xs sm:text-sm font-semibold text-foreground truncate group-hover:text-primary transition-colors">
                   {ep.episode_number}. {ep.name}
                 </p>
                 {ep.runtime && (
-                  <span className="text-[11px] text-[#b7b7b6] mt-0.5">{ep.runtime}m</span>
+                  <span className="text-[11px] text-muted-foreground mt-0.5">{ep.runtime}m</span>
                 )}
                 {ep.overview && (
-                  <p className="mt-1 text-[11px] text-gray-400 line-clamp-2">{ep.overview}</p>
+                  <p className="mt-1 text-[11px] text-muted-foreground line-clamp-2">{ep.overview}</p>
                 )}
               </div>
             </button>
@@ -123,4 +123,3 @@ export const SeasonsEpisodesDrawer: React.FC<SeasonsEpisodesDrawerProps> = ({
 };
 
 export default SeasonsEpisodesDrawer;
-
