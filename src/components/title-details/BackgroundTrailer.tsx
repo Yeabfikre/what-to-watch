@@ -48,16 +48,8 @@ export const BackgroundTrailer: React.FC<BackgroundTrailerProps> = ({
       setIsTrailerActive(true);
     }, 300);
 
-    // Timeout safety fallback: if no playing message after 7 seconds, keep backdrop
-    const safetyTimeout = setTimeout(() => {
-      if (!isPlaying) {
-        // Did not start playing, ensure backdrop stays visible
-      }
-    }, 7000);
-
     return () => {
       clearTimeout(timer);
-      clearTimeout(safetyTimeout);
     };
   }, [trailerKey, isStreamingFull]);
 
@@ -108,7 +100,7 @@ export const BackgroundTrailer: React.FC<BackgroundTrailerProps> = ({
   };
 
   // YouTube Command Sender Helper
-  const sendCommand = useCallback((func: string, args: any[] = []) => {
+  const sendCommand = useCallback((func: string, args: unknown[] = []) => {
     try {
       iframeRef.current?.contentWindow?.postMessage(
         JSON.stringify({ event: "command", func, args }),
