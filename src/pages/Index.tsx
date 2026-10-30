@@ -190,22 +190,22 @@ const Index = () => {
           let backdropPath = details.backdrop_path;
 
           // Use an alternative backdrop for Game of Thrones
-          if (pick.id === 1399 && details.images?.backdrops?.length > 1) {
+          if (pick.id === 1399 && details.images?.backdrops && details.images.backdrops.length > 1) {
             const alt = details.images.backdrops.find(
-              (img: any) => img.file_path !== details.backdrop_path
+              (img) => img.file_path !== details.backdrop_path
             );
             if (alt) backdropPath = alt.file_path;
           }
 
           return {
             id: details.id,
-            title: (details as any).title,
-            name: (details as any).name,
+            title: details.title,
+            name: details.name,
             poster_path: details.poster_path,
             backdrop_path: backdropPath,
             vote_average: details.vote_average,
-            release_date: (details as any).release_date,
-            first_air_date: (details as any).first_air_date,
+            release_date: details.release_date,
+            first_air_date: details.first_air_date,
             genre_ids: details.genres?.map((g) => g.id) || [],
             overview: details.overview,
             media_type: pick.type,

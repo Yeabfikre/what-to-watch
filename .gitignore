@@ -12,6 +12,17 @@ dist
 dist-ssr
 *.local
 
+# AI & Agent artifacts
+.claude/
+.gemini/
+.cursor/
+.antigravity/
+
+# Scratch & Temporary files
+scratch/
+*.tmp
+*.temp
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

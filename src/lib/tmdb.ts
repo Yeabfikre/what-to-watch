@@ -72,16 +72,16 @@ const BANNED_KEYWORDS = [
   "softcore"
 ];
 
-function isAdultOrBanned(item: any): boolean {
+function isAdultOrBanned(item: Record<string, unknown>): boolean {
   if (item.adult === true) return true;
   
-  const title = (item.title || item.original_title || item.name || item.original_name || "").toLowerCase().trim();
+  const title = String(item.title || item.original_title || item.name || item.original_name || "").toLowerCase().trim();
   
   if (BANNED_TITLES.has(title) || title.startsWith("scorpio nights")) {
     return true;
   }
   
-  const overview = (item.overview || "").toLowerCase();
+  const overview = String(item.overview || "").toLowerCase();
   if (BANNED_KEYWORDS.some(keyword => overview.includes(keyword))) {
     return true;
   }
@@ -112,7 +112,7 @@ async function callTmdb(params: Record<string, string>) {
   
   // Explicitly filter out any adult content that sneaks through the edge proxy
   if (data && data.results && Array.isArray(data.results)) {
-    data.results = data.results.filter((item: any) => !isAdultOrBanned(item));
+    data.results = data.results.filter((item: Record<string, unknown>) => !isAdultOrBanned(item));
   }
   
   return data;
@@ -411,12 +411,12 @@ export function formatRuntime(minutes: number | undefined): string | null {
 
 // Helper to get display title
 export function getTitle(item: TmdbMovie | TmdbDetails): string {
-  return (item as any).title || (item as any).name || "Unknown";
+  return item.title || item.name || "Unknown";
 }
 
 // Helper to get year
 export function getYear(item: TmdbMovie | TmdbDetails): number {
-  const date = (item as any).release_date || (item as any).first_air_date || "";
+  const date = item.release_date || item.first_air_date || "";
   return date ? new Date(date).getFullYear() : 0;
 }
 

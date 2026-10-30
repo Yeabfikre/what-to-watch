@@ -30,7 +30,7 @@ const SearchBar = ({ onMovieClick }: SearchBarProps) => {
 
   // Filter to only movies and TV
   const filtered = results.filter(
-    (r: any) => r.media_type === "movie" || r.media_type === "tv"
+    (r: TmdbMovie) => r.media_type === "movie" || r.media_type === "tv"
   ).slice(0, 8);
 
   // Close on outside click
