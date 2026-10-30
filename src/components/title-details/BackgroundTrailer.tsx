@@ -171,7 +171,7 @@ export const BackgroundTrailer: React.FC<BackgroundTrailerProps> = ({
           {isMuted ? (
             <VolumeX className="h-4 w-4 sm:h-5 sm:w-5 text-white/90" />
           ) : (
-            <Volume2 className="h-4 w-4 sm:h-5 sm:w-5 text-[#e8a13a]" />
+            <Volume2 className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
           )}
         </button>
       )}

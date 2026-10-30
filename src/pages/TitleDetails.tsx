@@ -4,8 +4,6 @@ import {
   Home,
   Search,
   User,
-  Volume2,
-  VolumeX,
   Crown,
   Play,
   Download,
@@ -73,7 +71,6 @@ const TitleDetails = () => {
   const mediaType: "movie" | "tv" = rawType === "tv" ? "tv" : "movie";
 
   const [imgError, setImgError] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showTrailer, setShowTrailer] = useState(false);
   const [showSimilar, setShowSimilar] = useState(false);
@@ -407,17 +404,9 @@ const TitleDetails = () => {
               </div>
             </form>
 
-            {/* Right: ThemeToggle & Audio/Mute toggle */}
+            {/* Right: ThemeToggle */}
             <div className="flex items-center gap-2">
               <ThemeToggle />
-              <button
-                type="button"
-                onClick={() => setIsMuted(!isMuted)}
-                aria-label={isMuted ? "Unmute" : "Mute"}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-md transition-colors hover:bg-black/60 active:scale-95 cursor-pointer"
-              >
-                {isMuted ? <VolumeX className="h-4 w-4 text-red-400" /> : <Volume2 className="h-4 w-4" />}
-              </button>
             </div>
           </div>
         </div>
@@ -719,7 +708,7 @@ const TitleDetails = () => {
               </div>
               <div className="aspect-video w-full overflow-hidden rounded-2xl border border-border shadow-2xl bg-black">
                 <iframe
-                  src={`${trailerUrl}?autoplay=1&rel=0&playsinline=1&enablejsapi=1${isMuted ? "&mute=1" : ""}`}
+                  src={`${trailerUrl}?autoplay=1&rel=0&playsinline=1&enablejsapi=1`}
                   title={`${title} Official Trailer`}
                   className="h-full w-full border-0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
