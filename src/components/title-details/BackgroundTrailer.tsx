@@ -160,13 +160,13 @@ export const BackgroundTrailer: React.FC<BackgroundTrailerProps> = ({
         </div>
       )}
 
-      {/* 3. DEDICATED MUTE / UNMUTE BUTTON (top right, matching phonofilm Wl) */}
+      {/* 3. DEDICATED MUTE / UNMUTE BUTTON (Bottom-right corner of trailer hero) */}
       {isTrailerActive && isPlaying && !isStreamingFull && (
         <button
           type="button"
           onClick={toggleMute}
           aria-label={isMuted ? "Unmute trailer" : "Mute trailer"}
-          className="absolute top-4 right-4 z-30 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/50 text-white backdrop-blur-md transition-all hover:bg-black/75 hover:scale-105 active:scale-95 sm:right-6 sm:h-11 sm:w-11 md:top-24 md:right-8 lg:right-12 cursor-pointer shadow-lg"
+          className="absolute bottom-6 right-6 z-30 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/60 text-white backdrop-blur-md transition-all hover:bg-black/80 hover:scale-105 active:scale-95 sm:h-11 sm:w-11 md:bottom-8 md:right-8 cursor-pointer shadow-lg"
         >
           {isMuted ? (
             <VolumeX className="h-4 w-4 sm:h-5 sm:w-5 text-white/90" />

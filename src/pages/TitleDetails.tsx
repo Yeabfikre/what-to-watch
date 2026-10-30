@@ -2,7 +2,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft,
   Home,
-  Search,
   User,
   Crown,
   Play,
@@ -30,7 +29,7 @@ import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "@/components/ui/use-toast";
 import Footer from "@/components/Footer";
-import ThemeToggle from "@/components/ThemeToggle";
+import Navbar from "@/components/Navbar";
 import { SeasonsEpisodesDrawer } from "@/components/title-details/SeasonsEpisodesDrawer";
 import { CastAndStudiosSection } from "@/components/title-details/CastAndStudiosSection";
 import { BackgroundTrailer } from "@/components/title-details/BackgroundTrailer";
@@ -45,6 +44,7 @@ import {
   fetchDetails,
   fetchSeason,
   fetchDiscover,
+  getMediaType,
   type TmdbMovie,
 } from "@/lib/tmdb";
 
@@ -71,7 +71,6 @@ const TitleDetails = () => {
   const mediaType: "movie" | "tv" = rawType === "tv" ? "tv" : "movie";
 
   const [imgError, setImgError] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [showTrailer, setShowTrailer] = useState(false);
   const [showSimilar, setShowSimilar] = useState(false);
   const [selectedSeason, setSelectedSeason] = useState(1);
@@ -139,39 +138,12 @@ const TitleDetails = () => {
     enabled: id > 0 && showSimilar,
   });
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!searchQuery.trim()) return;
-    navigate(`/movies?q=${encodeURIComponent(searchQuery.trim())}`);
-  };
-
   if (isLoading) {
     return (
-      <div className="min-h-screen w-full bg-[#0e0e0d] text-[#f5f2ea] flex flex-col">
-        <div className="w-full max-w-7xl mx-auto p-4 sm:p-7 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => navigate(-1)}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-md"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => navigate("/")}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-md"
-            >
-              <Home className="h-4 w-4" />
-            </button>
-          </div>
-          <div className="h-11 w-64 rounded-full bg-white/5 animate-pulse" />
-          <div className="flex items-center gap-2">
-            <div className="h-10 w-16 rounded-full bg-white/5 animate-pulse" />
-            <div className="h-10 w-10 rounded-full bg-white/5 animate-pulse" />
-          </div>
-        </div>
-
-        <div className="w-full h-[540px] bg-white/5 animate-pulse flex items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#e8a13a] border-t-transparent" />
+      <div className="min-h-screen w-full bg-background text-foreground flex flex-col">
+        <Navbar showBack onMovieClick={(m) => navigate(`/title/${getMediaType(m)}/${m.id}`)} />
+        <div className="w-full flex-1 flex items-center justify-center min-h-[500px]">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
         </div>
       </div>
     );
@@ -179,19 +151,22 @@ const TitleDetails = () => {
 
   if (error || !details) {
     return (
-      <div className="min-h-screen w-full bg-[#0e0e0d] text-[#f5f2ea] flex flex-col items-center justify-center p-6 text-center">
-        <Film className="h-16 w-16 text-white/30 mb-4" />
-        <h2 className="text-2xl font-bold text-white">Title Not Found</h2>
-        <p className="mt-2 text-sm text-[#b7b7b6] max-w-md">
-          We couldn't retrieve the details for this title. It may be unavailable or moved.
-        </p>
-        <button
-          onClick={() => navigate("/")}
-          className="mt-6 flex items-center gap-2 rounded-full bg-[#e8a13a] px-6 py-2.5 text-sm font-semibold text-[#0e0e0d] transition hover:opacity-90"
-        >
-          <Home className="h-4 w-4" />
-          Return Home
-        </button>
+      <div className="min-h-screen w-full bg-background text-foreground flex flex-col">
+        <Navbar showBack onMovieClick={(m) => navigate(`/title/${getMediaType(m)}/${m.id}`)} />
+        <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+          <Film className="h-16 w-16 text-muted-foreground/40 mb-4" />
+          <h2 className="text-2xl font-bold text-foreground">Title Not Found</h2>
+          <p className="mt-2 text-sm text-muted-foreground max-w-md">
+            We couldn't retrieve the details for this title. It may be unavailable or moved.
+          </p>
+          <button
+            onClick={() => navigate("/")}
+            className="mt-6 flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground transition hover:opacity-90 cursor-pointer shadow-md"
+          >
+            <Home className="h-4 w-4" />
+            Return Home
+          </button>
+        </div>
       </div>
     );
   }
@@ -364,53 +339,13 @@ const TitleDetails = () => {
 
   return (
     <div className="min-h-screen w-full bg-background text-foreground flex flex-col selection:bg-primary/30">
+      {/* What to Watch Top Navigation Bar */}
+      <Navbar showBack onMovieClick={(m) => navigate(`/title/${getMediaType(m)}/${m.id}`)} />
+
       {/* ======================================================== */}
       {/* HERO SECTION CONTAINER (Edge-to-edge What to Watch Flow)  */}
       {/* ======================================================== */}
       <div className="relative flex w-full flex-col overflow-hidden bg-black border-b border-border min-h-[520px] md:min-h-[660px]">
-        {/* Top navigation bar */}
-        <div className="relative z-30 w-full px-4 pt-4 sm:px-6 sm:pt-6 md:px-8">
-          <div className="max-w-7xl mx-auto flex w-full items-center justify-between gap-3 sm:gap-6">
-            {/* Left: Back button & WTW Brand */}
-            <div className="flex items-center gap-2 sm:gap-3">
-              <button
-                type="button"
-                onClick={() => navigate(-1)}
-                aria-label="Back"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur-md transition-colors hover:bg-black/60 active:scale-95 cursor-pointer"
-              >
-                <ArrowLeft className="h-4 w-4" />
-              </button>
-              <Link to="/" className="flex items-center gap-2">
-                <img src="/apple-touch-icon.png" alt="WTW" className="h-7 w-7 rounded-md hidden sm:block" />
-                <span className="text-sm sm:text-base font-bold tracking-tight text-white drop-shadow">
-                  <span className="text-primary font-extrabold">WTW</span>
-                  <span className="hidden md:inline text-white/90"> : What To Watch</span>
-                </span>
-              </Link>
-            </div>
-
-            {/* Center: Search Bar */}
-            <form onSubmit={handleSearchSubmit} className="relative flex-1 max-w-md mx-2 sm:mx-4 hidden sm:block">
-              <div className="relative flex items-center">
-                <Search className="absolute left-4 h-4 w-4 text-white/60 pointer-events-none" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search Movies & Shows..."
-                  className="w-full rounded-full bg-white/10 border border-white/15 py-2.5 pl-11 pr-4 text-xs sm:text-sm text-white placeholder-white/50 backdrop-blur-md outline-none transition focus:border-primary focus:bg-white/15"
-                />
-              </div>
-            </form>
-
-            {/* Right: ThemeToggle */}
-            <div className="flex items-center gap-2">
-              <ThemeToggle />
-            </div>
-          </div>
-        </div>
-
         {/* STREAMING PLAYER INTEGRATION (When Playing) */}
         {isPlaying ? (
           <div ref={playerRef} className="relative z-20 w-full max-w-7xl mx-auto px-4 py-6 sm:px-6 md:px-8 flex flex-col justify-center flex-1">
@@ -485,7 +420,7 @@ const TitleDetails = () => {
               <div className="absolute bottom-0 left-0 h-96 w-full bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none z-10" />
 
               {/* Hero Main Content */}
-              <div className="relative z-20 w-full max-w-7xl mx-auto px-4 pt-24 pb-8 sm:px-6 md:px-8 md:pt-36 md:pb-12 mt-auto">
+              <div className="relative z-20 w-full max-w-7xl mx-auto px-4 pt-16 pb-8 sm:px-6 md:px-8 md:pt-28 md:pb-12 mt-auto">
                 <div className="max-w-3xl">
                 {/* Title */}
                 <h1 className="text-[32px] sm:text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-white leading-[1.08] drop-shadow-md">
