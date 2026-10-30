@@ -190,7 +190,6 @@ const Watch = () => {
     <div className="min-h-screen bg-background text-foreground flex flex-col selection:bg-primary/30">
       {/* Official What To Watch Navbar */}
       <Navbar
-        showBack
         onMovieClick={(m: TmdbMovie) => {
           const mType = getMediaType(m);
           navigate(`/watch?id=${m.id}&type=${mType}&title=${encodeURIComponent(getTitle(m))}`);

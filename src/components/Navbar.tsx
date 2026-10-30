@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ChevronDown, Menu, ArrowLeft } from "lucide-react";
+import { ChevronDown, Menu } from "lucide-react";
 import SearchBar from "./SearchBar";
 import ThemeToggle from "./ThemeToggle";
 import {
@@ -21,7 +21,6 @@ import { getMediaType, type TmdbMovie } from "@/lib/tmdb";
 
 interface NavbarProps {
   onMovieClick?: (movie: TmdbMovie) => void;
-  showBack?: boolean;
 }
 
 const navLinks = [
@@ -36,7 +35,7 @@ const categoryLinks = [
   { label: "Documentaries", path: "/documentaries" },
 ];
 
-const Navbar = ({ onMovieClick, showBack }: NavbarProps) => {
+const Navbar = ({ onMovieClick }: NavbarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [catOpen, setCatOpen] = useState(false);
@@ -55,25 +54,13 @@ const Navbar = ({ onMovieClick, showBack }: NavbarProps) => {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="sticky left-0 right-0 top-0 z-50 flex items-center gap-3 md:gap-6 backdrop-blur-md px-4 md:px-6 py-4 lg:px-16"
+      className="sticky left-0 right-0 top-0 z-50 flex items-center gap-3 md:gap-6 backdrop-blur-md px-4 sm:px-6 md:px-12 lg:px-16 py-4"
     >
-      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-        {showBack && (
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            aria-label="Back"
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card/60 text-foreground backdrop-blur-md transition hover:bg-accent hover:text-accent-foreground active:scale-95 cursor-pointer"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </button>
-        )}
-        <a href="/" className="shrink-0">
-          <h2 className="text-lg font-bold tracking-tight text-foreground drop-shadow-lg">
-            <span className="hidden md:inline">WTW : </span>What To Watch
-          </h2>
-        </a>
-      </div>
+      <a href="/" className="shrink-0">
+        <h2 className="text-lg font-bold tracking-tight text-foreground drop-shadow-lg">
+          <span className="hidden md:inline">WTW : </span>What To Watch
+        </h2>
+      </a>
       <div className="w-full md:flex-1 md:max-w-sm">
         <SearchBar onMovieClick={handleMovieSelect} />
       </div>

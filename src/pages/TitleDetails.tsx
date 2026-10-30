@@ -140,7 +140,7 @@ const TitleDetails = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen w-full bg-background text-foreground flex flex-col">
-        <Navbar showBack onMovieClick={(m) => navigate(`/title/${getMediaType(m)}/${m.id}`)} />
+        <Navbar onMovieClick={(m) => navigate(`/title/${getMediaType(m)}/${m.id}`)} />
         <div className="w-full flex-1 flex items-center justify-center min-h-[500px]">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
         </div>
@@ -151,7 +151,7 @@ const TitleDetails = () => {
   if (error || !details) {
     return (
       <div className="min-h-screen w-full bg-background text-foreground flex flex-col">
-        <Navbar showBack onMovieClick={(m) => navigate(`/title/${getMediaType(m)}/${m.id}`)} />
+        <Navbar onMovieClick={(m) => navigate(`/title/${getMediaType(m)}/${m.id}`)} />
         <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
           <Film className="h-16 w-16 text-muted-foreground/40 mb-4" />
           <h2 className="text-2xl font-bold text-foreground">Title Not Found</h2>
@@ -339,7 +339,7 @@ const TitleDetails = () => {
   return (
     <div className="min-h-screen w-full bg-background text-foreground flex flex-col selection:bg-primary/30">
       {/* What to Watch Top Navigation Bar */}
-      <Navbar showBack onMovieClick={(m) => navigate(`/title/${getMediaType(m)}/${m.id}`)} />
+      <Navbar onMovieClick={(m) => navigate(`/title/${getMediaType(m)}/${m.id}`)} />
 
       {/* ======================================================== */}
       {/* HERO SECTION CONTAINER (Edge-to-edge What to Watch Flow)  */}
