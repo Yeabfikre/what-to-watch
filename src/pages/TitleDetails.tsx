@@ -367,13 +367,12 @@ const TitleDetails = () => {
   return (
     <div className="min-h-screen w-full bg-[#0e0e0d] text-[#f5f2ea] flex flex-col selection:bg-[#e8a13a]/30">
       {/* ======================================================== */}
-      {/* HERO SECTION CONTAINER (phonofilm.cc Design Architecture) */}
+      {/* HERO SECTION CONTAINER (Edge-to-edge What to Watch Flow)  */}
       {/* ======================================================== */}
-      <div className="relative w-full overflow-hidden md:p-3 max-w-7xl mx-auto">
-        <div className="relative flex w-full flex-col overflow-hidden bg-black md:rounded-[28px] border border-[#2e2a26] min-h-[520px] md:min-h-[640px] shadow-[0_8px_20px_rgba(0,0,0,0.34)]">
-          {/* Top navigation bar */}
-          <div className="relative z-30 w-full px-4 pt-4 sm:px-6 sm:pt-6 md:px-8">
-            <div className="flex w-full items-center justify-between gap-3 sm:gap-6">
+      <div className="relative flex w-full flex-col overflow-hidden bg-black border-b border-[#2e2a26] min-h-[520px] md:min-h-[660px]">
+        {/* Top navigation bar */}
+        <div className="relative z-30 w-full px-4 pt-4 sm:px-6 sm:pt-6 md:px-8">
+          <div className="max-w-7xl mx-auto flex w-full items-center justify-between gap-3 sm:gap-6">
               {/* Left: Back & Home controls */}
               <div className="flex items-center gap-2">
                 <button
@@ -428,7 +427,7 @@ const TitleDetails = () => {
 
           {/* STREAMING PLAYER INTEGRATION (When Playing) */}
           {isPlaying ? (
-            <div ref={playerRef} className="relative z-20 w-full p-4 sm:p-6 md:p-8 flex flex-col justify-center flex-1">
+            <div ref={playerRef} className="relative z-20 w-full max-w-7xl mx-auto px-4 py-6 sm:px-6 md:px-8 flex flex-col justify-center flex-1">
               {/* Player Top Controller Bar */}
               <div className="flex flex-wrap items-center justify-between gap-3 mb-4 bg-[#161513]/90 border border-[#2e2a26] p-3 rounded-2xl backdrop-blur-md">
                 <div className="flex items-center gap-2.5">
@@ -500,7 +499,8 @@ const TitleDetails = () => {
               <div className="absolute bottom-0 left-0 h-96 w-full bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none z-10" />
 
               {/* Hero Main Content */}
-              <div className="relative z-20 px-4 pt-24 pb-8 sm:px-6 md:px-8 md:pt-36 md:pb-12 lg:px-12 mt-auto max-w-4xl">
+              <div className="relative z-20 w-full max-w-7xl mx-auto px-4 pt-24 pb-8 sm:px-6 md:px-8 md:pt-36 md:pb-12 mt-auto">
+                <div className="max-w-3xl">
                 {/* Title */}
                 <h1 className="text-[32px] sm:text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-white leading-[1.08] drop-shadow-md">
                   {title}
@@ -752,9 +752,9 @@ const TitleDetails = () => {
                   </div>
                 </div>
               </div>
-            </>
-          )}
-        </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* ======================================================== */}
@@ -864,7 +864,7 @@ const TitleDetails = () => {
       {/* ======================================================== */}
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 py-8 space-y-10">
         {/* METADATA DEFINITION ROWS (phonofilm.cc 03-div.html) */}
-        <div className="space-y-3 border-t border-white/10 pt-5">
+        <div className="space-y-3.5">
           <div className="flex items-baseline gap-3 md:gap-4">
             <span className="w-36 shrink-0 text-[10px] font-semibold tracking-[0.18em] text-[#b7b7b6] uppercase">
               Parental rating

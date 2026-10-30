@@ -145,9 +145,9 @@ export const BackgroundTrailer: React.FC<BackgroundTrailerProps> = ({
         />
       )}
 
-      {/* 2. BACKGROUND TRAILER IFRAME (phonofilm exact sizing & ratio) */}
+      {/* 2. BACKGROUND TRAILER IFRAME */}
       {isTrailerActive && embedUrl && !hasError && !isStreamingFull && (
-        <div className="pointer-events-none absolute inset-0 overflow-hidden md:rounded-[28px]">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <iframe
             ref={iframeRef}
             title={`${title} Background Trailer`}
