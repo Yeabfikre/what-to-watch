@@ -345,7 +345,7 @@ const TitleDetails = () => {
       {/* ======================================================== */}
       {/* HERO SECTION CONTAINER (Edge-to-edge What to Watch Flow)  */}
       {/* ======================================================== */}
-      <div className="relative flex w-full flex-col overflow-hidden bg-black border-b border-border min-h-[520px] md:min-h-[660px]">
+      <div className="relative flex w-full flex-col overflow-hidden bg-black border-b border-border min-h-[460px] md:min-h-[520px] lg:min-h-[560px]">
         {/* STREAMING PLAYER INTEGRATION (When Playing) */}
         {isPlaying ? (
           <div ref={playerRef} className="relative z-20 w-full max-w-7xl mx-auto px-4 py-6 sm:px-6 md:px-8 flex flex-col justify-center flex-1">
@@ -417,23 +417,23 @@ const TitleDetails = () => {
 
               {/* Gradient Overlays */}
               <div className="absolute top-0 left-0 h-16 w-full bg-gradient-to-b from-black/40 to-transparent pointer-events-none z-10" />
-              <div className="absolute bottom-0 left-0 h-96 w-full bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none z-10" />
+              <div className="absolute bottom-0 left-0 h-48 sm:h-64 w-full bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none z-10" />
 
               {/* Hero Main Content */}
-              <div className="relative z-20 w-full max-w-7xl mx-auto px-4 pt-16 pb-8 sm:px-6 md:px-8 md:pt-28 md:pb-12 mt-auto">
+              <div className="relative z-20 w-full max-w-7xl mx-auto px-4 pt-6 pb-8 sm:px-6 sm:pt-8 sm:pb-10 md:px-8 md:pt-10 md:pb-12">
                 <div className="max-w-3xl">
                 {/* Title */}
-                <h1 className="text-[32px] sm:text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-white leading-[1.08] drop-shadow-md">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-tight drop-shadow-md">
                   {title}
                 </h1>
 
                 {/* Synopsis Overview */}
-                <p className="mt-3 text-sm md:text-base font-normal text-white/80 line-clamp-2 md:line-clamp-3 leading-relaxed max-w-2xl drop-shadow">
+                <p className="mt-2.5 text-xs sm:text-sm md:text-base font-normal text-white/80 line-clamp-2 md:line-clamp-3 leading-relaxed max-w-2xl drop-shadow">
                   {details.overview || "No synopsis available for this title."}
                 </p>
 
                 {/* Meta Line */}
-                <div className="mt-4 flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-xs sm:text-sm font-medium text-white/85">
+                <div className="mt-3 flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-xs sm:text-sm font-medium text-white/85">
                   <span className="rounded-full border border-white/15 bg-white/[0.07] px-2.5 py-0.5 text-xs font-medium tracking-tight text-white/80 backdrop-blur-md">
                     {isTV ? "TV Show" : "Movie"}
                   </span>
@@ -475,7 +475,7 @@ const TitleDetails = () => {
                 </div>
 
                 {/* Action Buttons Row */}
-                <div className="mt-5 flex flex-col gap-3">
+                <div className="mt-4 flex flex-col gap-2.5">
                   <div className="flex flex-wrap items-center gap-2.5">
                     {/* 👑 Stream Button (Starts In-Page Player) */}
                     <button

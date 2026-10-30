@@ -20,6 +20,8 @@ const MovieRow = ({ title, movies, onMovieClick, fetchNextPage, hasNextPage, isF
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const tryFetchMore = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage && fetchNextPage) {
@@ -29,6 +31,12 @@ const MovieRow = ({ title, movies, onMovieClick, fetchNextPage, hasNextPage, isF
 
   const handleScroll = useCallback(() => {
     if (!scrollRef.current) return;
+    setIsScrolling(true);
+    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+    scrollTimeoutRef.current = setTimeout(() => {
+      setIsScrolling(false);
+    }, 150);
+
     const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
     setCanScrollLeft(scrollLeft > 10);
     setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
@@ -39,6 +47,12 @@ const MovieRow = ({ title, movies, onMovieClick, fetchNextPage, hasNextPage, isF
       tryFetchMore();
     }
   }, [tryFetchMore]);
+
+  useEffect(() => {
+    return () => {
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+    };
+  }, []);
 
   // Also eagerly load more whenever new movies arrive and there are more pages
   useEffect(() => {
@@ -89,21 +103,27 @@ const MovieRow = ({ title, movies, onMovieClick, fetchNextPage, hasNextPage, isF
         <div
           ref={scrollRef}
           onScroll={handleScroll}
-          className="hide-scrollbar flex min-h-[300px] items-stretch gap-4 overflow-x-auto overflow-y-visible pb-4 pt-2 scroll-smooth"
+          className="hide-scrollbar flex h-[315px] items-start gap-4 overflow-x-auto overflow-y-hidden pb-4 pt-2 scroll-smooth"
           style={{ overscrollBehavior: "auto" }}
         >
           {filteredMovies.map((movie, i) => (
-            <MovieCard key={movie.id} movie={movie} index={i} onClick={onMovieClick} />
+            <MovieCard
+              key={movie.id}
+              movie={movie}
+              index={i}
+              onClick={onMovieClick}
+              isRowScrolling={isScrolling}
+            />
           ))}
 
           {isFetchingNextPage && (
-            <div className="flex h-[260px] min-w-[160px] items-center justify-center">
+            <div className="flex h-[285px] min-w-[160px] items-center justify-center">
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             </div>
           )}
 
           {hasNextPage && !isFetchingNextPage && (
-            <div className="flex h-[260px] min-w-[140px] items-center justify-center">
+            <div className="flex h-[285px] min-w-[140px] items-center justify-center">
               <button
                 onClick={tryFetchMore}
                 className="flex flex-col items-center gap-2 rounded-xl border border-border/50 bg-secondary/50 px-4 py-3 text-xs text-muted-foreground transition hover:bg-secondary hover:text-foreground"

@@ -7,14 +7,43 @@ interface MovieCardProps {
   movie: TmdbMovie;
   index: number;
   onClick: (movie: TmdbMovie) => void;
+  isRowScrolling?: boolean;
 }
 
-const MovieCard = ({ movie, index, onClick }: MovieCardProps) => {
+const MovieCard = ({ movie, index, onClick, isRowScrolling }: MovieCardProps) => {
   const [imgError, setImgError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [expandedImgReady, setExpandedImgReady] = useState(false);
   const [expandedUrl, setExpandedUrl] = useState<string | null>(null);
   const preloadRef = useRef(false);
+  const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // If the parent row is actively scrolling, cancel any hover expansion immediately
+  useEffect(() => {
+    if (isRowScrolling) {
+      if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+      setIsHovered(false);
+    }
+  }, [isRowScrolling]);
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+    };
+  }, []);
+
+  const handleMouseEnter = () => {
+    if (isRowScrolling) return;
+    if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+    hoverTimerRef.current = setTimeout(() => {
+      setIsHovered(true);
+    }, 120);
+  };
+
+  const handleMouseLeave = () => {
+    if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+    setIsHovered(false);
+  };
 
   const posterUrl = tmdbImg.poster(movie.poster_path);
   const backdropUrl = tmdbImg.backdrop(movie.backdrop_path);
@@ -73,12 +102,12 @@ const MovieCard = ({ movie, index, onClick }: MovieCardProps) => {
       animate={{ opacity: 1, y: 0, width: isHovered ? 320 : 160 }}
       transition={
         isHovered || !isHovered
-          ? { width: { type: "spring", stiffness: 400, damping: 30, mass: 0.8 }, delay: 0, duration: 0.3 }
+          ? { width: { type: "spring", stiffness: 400, damping: 30, mass: 0.8 }, delay: 0, duration: 0.25 }
           : { delay: index * 0.03, duration: 0.3 }
       }
-      className="group shrink-0 cursor-pointer snap-start h-full"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className="group shrink-0 cursor-pointer snap-start h-[285px]"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       onClick={() => onClick(movie)}
     >
       <AnimatePresence mode="wait">
@@ -89,7 +118,7 @@ const MovieCard = ({ movie, index, onClick }: MovieCardProps) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
-            className="flex h-full flex-col justify-between"
+            className="flex h-[285px] w-full flex-col justify-between"
           >
             <div className="relative overflow-hidden rounded-lg">
               {posterUrl && !imgError ? (
@@ -114,7 +143,7 @@ const MovieCard = ({ movie, index, onClick }: MovieCardProps) => {
               </div>
             </div>
             <div className="mt-auto">
-              <p className="mt-2 truncate text-sm font-medium text-foreground">{title}</p>
+              <p className="mt-1.5 truncate text-sm font-medium text-foreground">{title}</p>
               <p className="text-xs text-muted-foreground">{year || ""}</p>
             </div>
           </motion.div>
@@ -125,7 +154,7 @@ const MovieCard = ({ movie, index, onClick }: MovieCardProps) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
-            className="flex h-full flex-col overflow-visible rounded-xl bg-card shadow-2xl shadow-black/40 ring-1 ring-border/20"
+            className="flex h-[285px] w-full flex-col overflow-hidden rounded-xl bg-card shadow-2xl shadow-black/40 ring-1 ring-border/20"
           >
             {/* Alternate poster preview */}
             <div className="relative aspect-video w-full shrink-0 overflow-hidden rounded-t-xl">
@@ -152,7 +181,7 @@ const MovieCard = ({ movie, index, onClick }: MovieCardProps) => {
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, duration: 0.25 }}
-              className="flex flex-1 flex-col justify-between p-2.5"
+              className="flex flex-1 flex-col justify-between p-2 overflow-hidden"
             >
               {/* Action buttons */}
               <div className="flex items-center gap-2">
@@ -187,7 +216,7 @@ const MovieCard = ({ movie, index, onClick }: MovieCardProps) => {
               {/* Genre tags */}
               {genres.length > 0 && (
                 <div className="flex flex-wrap gap-1">
-                  {genres.map((gId) => (
+                  {genres.slice(0, 2).map((gId) => (
                     <span
                       key={gId}
                       className="rounded-full bg-secondary px-1.5 py-0.5 text-[9px] font-medium text-secondary-foreground"
