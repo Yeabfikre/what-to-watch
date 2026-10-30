@@ -19,7 +19,6 @@ import {
   Building2,
   Tv,
   ChevronDown,
-  ChevronRight,
   Languages,
   X,
   Server,
@@ -526,30 +525,6 @@ const TitleDetails = () => {
                     </button>
                   </div>
 
-                  {/* Subtitles Banner */}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      toast({
-                        title: "Multi-Language Subtitles Ready",
-                        description:
-                          "Subtitles in English, Spanish, Arabic, French, German, and 20+ languages available inside player.",
-                      })
-                    }
-                    className="inline-flex self-start items-center gap-2 rounded-lg border border-white/15 bg-black/40 px-3 py-1.5 text-xs text-white/90 backdrop-blur-sm transition hover:bg-black/60 hover:border-white/25 active:scale-95 cursor-pointer"
-                  >
-                    <Languages className="h-3.5 w-3.5 text-white/70" />
-                    <span className="font-medium">Subtitles</span>
-                    <span className="text-white/60 hidden sm:inline">in your language</span>
-                    <span className="flex items-center gap-1 text-[11px] font-semibold text-white/80 bg-white/10 px-1.5 py-0.5 rounded">
-                      <span>GB</span>
-                      <span>SA</span>
-                      <span>FR</span>
-                      <span>ES</span>
-                    </span>
-                    <ChevronRight className="h-3.5 w-3.5 text-white/50" />
-                  </button>
-
                   {/* Secondary Actions Row */}
                   <div className="flex flex-wrap items-center gap-2 pt-0.5">
                     <button
@@ -580,7 +555,12 @@ const TitleDetails = () => {
 
                     <button
                       type="button"
-                      onClick={() => toast({ title: "Added to List" })}
+                      onClick={() =>
+                        toast({
+                          title: "Add to List",
+                          description: "Custom lists will be available in an upcoming update.",
+                        })
+                      }
                       className="flex items-center gap-1.5 rounded-lg border border-white/15 bg-black/40 px-3 py-1.5 text-xs font-medium text-white/90 backdrop-blur-sm transition-all hover:border-white/30 hover:bg-white/10 active:scale-95 cursor-pointer"
                     >
                       <Plus className="h-3.5 w-3.5" />
@@ -598,6 +578,20 @@ const TitleDetails = () => {
                     >
                       <Heart className={`h-3.5 w-3.5 ${isLiked ? "fill-current" : ""}`} />
                       <span>Like</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        toast({
+                          title: "Subtitles",
+                          description: "Subtitle selection will be available in an upcoming update.",
+                        })
+                      }
+                      className="flex items-center gap-1.5 rounded-lg border border-white/15 bg-black/40 px-3 py-1.5 text-xs font-medium text-white/90 backdrop-blur-sm transition-all hover:border-white/30 hover:bg-white/10 active:scale-95 cursor-pointer"
+                    >
+                      <Languages className="h-3.5 w-3.5" />
+                      <span>Subtitles</span>
                     </button>
 
                     <button
