@@ -130,7 +130,7 @@ export const BackgroundTrailer: React.FC<BackgroundTrailerProps> = ({
         <img
           src={backdropUrl}
           alt={title}
-          className={`absolute inset-0 h-full w-full object-cover object-center scale-105 transition-opacity duration-1000 ${
+          className={`absolute inset-0 h-full w-full object-cover object-[center_20%] scale-105 transition-opacity duration-1000 ${
             isPlaying && isTrailerActive ? "opacity-0" : "opacity-90"
           }`}
           onError={() => setImgError(true)}
@@ -148,7 +148,7 @@ export const BackgroundTrailer: React.FC<BackgroundTrailerProps> = ({
             tabIndex={-1}
             aria-hidden="true"
             onLoad={handleIframeLoad}
-            className={`pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-800 ${
+            className={`pointer-events-none absolute top-[44%] left-1/2 -translate-x-1/2 -translate-y-1/2 scale-[1.18] transition-opacity duration-800 ${
               isPlaying ? "opacity-100" : "opacity-0"
             }`}
             style={{

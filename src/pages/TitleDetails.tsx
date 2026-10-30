@@ -415,8 +415,8 @@ const TitleDetails = () => {
                 isStreamingFull={isPlaying}
               />
 
-              {/* Gradient Overlays matching phonofilm.cc */}
-              <div className="absolute top-0 left-0 h-32 w-full bg-gradient-to-b from-black/90 via-black/40 to-transparent pointer-events-none z-10" />
+              {/* Gradient Overlays */}
+              <div className="absolute top-0 left-0 h-16 w-full bg-gradient-to-b from-black/40 to-transparent pointer-events-none z-10" />
               <div className="absolute bottom-0 left-0 h-96 w-full bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none z-10" />
 
               {/* Hero Main Content */}
