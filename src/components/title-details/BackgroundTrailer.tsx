@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { Volume2, VolumeX, Play, Pause, SkipBack, SkipForward } from "lucide-react";
+import { Volume2, VolumeX } from "lucide-react";
 
 interface BackgroundTrailerProps {
   trailerKey: string | null;
@@ -19,10 +19,8 @@ export const BackgroundTrailer: React.FC<BackgroundTrailerProps> = ({
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [isTrailerActive, setIsTrailerActive] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [hasError, setHasError] = useState(false);
-  const [currentTime, setCurrentTime] = useState(6);
   const [imgError, setImgError] = useState(false);
 
   // If user opened full streaming player, cancel trailer
@@ -44,7 +42,6 @@ export const BackgroundTrailer: React.FC<BackgroundTrailerProps> = ({
 
     setHasError(false);
     setIsPlaying(false);
-    setIsPaused(false);
     setIsMuted(true);
 
     const timer = setTimeout(() => {
@@ -83,15 +80,7 @@ export const BackgroundTrailer: React.FC<BackgroundTrailerProps> = ({
         // YouTube playerState 1 = PLAYING
         if (data?.info?.playerState === 1) {
           setIsPlaying(true);
-          setIsPaused(false);
           onTrailerStateChange?.(true);
-        } else if (data?.info?.playerState === 2) {
-          // 2 = PAUSED
-          setIsPaused(true);
-        }
-
-        if (typeof data?.info?.currentTime === "number") {
-          setCurrentTime(data.info.currentTime);
         }
       } catch {
         // Not a JSON message or non-YT message
@@ -135,31 +124,6 @@ export const BackgroundTrailer: React.FC<BackgroundTrailerProps> = ({
     const nextMuted = !isMuted;
     setIsMuted(nextMuted);
     sendCommand(nextMuted ? "mute" : "unMute");
-  };
-
-  // Play / Pause Toggle
-  const togglePlayPause = () => {
-    if (isPaused) {
-      sendCommand("playVideo");
-      setIsPaused(false);
-    } else {
-      sendCommand("pauseVideo");
-      setIsPaused(true);
-    }
-  };
-
-  // Seek backward 10s
-  const handleSkipBack = () => {
-    const newTime = Math.max(0, currentTime - 10);
-    setCurrentTime(newTime);
-    sendCommand("seekTo", [newTime, true]);
-  };
-
-  // Seek forward 10s
-  const handleSkipForward = () => {
-    const newTime = currentTime + 10;
-    setCurrentTime(newTime);
-    sendCommand("seekTo", [newTime, true]);
   };
 
   // Build phonofilm YouTube background embed URL
@@ -219,48 +183,8 @@ export const BackgroundTrailer: React.FC<BackgroundTrailerProps> = ({
           )}
         </button>
       )}
-
-      {/* 4. FLOATING PLAYBACK CONTROLS (phonofilm Dog Stars style from screenshot) */}
-      {isTrailerActive && isPlaying && !isStreamingFull && (
-        <div className="absolute right-4 md:right-12 bottom-36 sm:bottom-44 md:bottom-40 z-30 flex items-center gap-2.5">
-          {/* Skip Back 10s */}
-          <button
-            type="button"
-            onClick={handleSkipBack}
-            aria-label="Skip backward 10s"
-            className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white/85 backdrop-blur-md transition hover:bg-black/60 hover:text-white active:scale-95 cursor-pointer shadow-md"
-          >
-            <SkipBack className="h-4 w-4" />
-          </button>
-
-          {/* Pause / Play Toggle */}
-          <button
-            type="button"
-            onClick={togglePlayPause}
-            aria-label={isPaused ? "Play trailer" : "Pause trailer"}
-            className="flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-white/25 bg-black/50 text-white backdrop-blur-md transition hover:bg-black/70 hover:scale-105 active:scale-95 cursor-pointer shadow-lg"
-          >
-            {isPaused ? (
-              <Play className="h-5 w-5 fill-current ml-0.5" />
-            ) : (
-              <Pause className="h-5 w-5 fill-current" />
-            )}
-          </button>
-
-          {/* Skip Forward 10s */}
-          <button
-            type="button"
-            onClick={handleSkipForward}
-            aria-label="Skip forward 10s"
-            className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white/85 backdrop-blur-md transition hover:bg-black/60 hover:text-white active:scale-95 cursor-pointer shadow-md"
-          >
-            <SkipForward className="h-4 w-4" />
-          </button>
-        </div>
-      )}
     </>
   );
 };
 
 export default BackgroundTrailer;
-
