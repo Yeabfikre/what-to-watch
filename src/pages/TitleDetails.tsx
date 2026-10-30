@@ -90,15 +90,11 @@ const TitleDetails = () => {
     providerIdx: currentProviderIndex,
     currentProvider,
     failedProviders,
-    countdown,
     playbackConfirmed,
-    autoSwitchEnabled,
     switchToServer: setCurrentProviderIndex,
     skipToNextServer,
-    cancelAutoSwitch,
   } = useStreamFailover({
     active: isPlaying,
-    timeoutSeconds: 8,
   });
 
   // Fetch full details
@@ -378,26 +374,10 @@ const TitleDetails = () => {
               </div>
 
               <div className="flex items-center gap-2">
-                {countdown !== null && !playbackConfirmed && autoSwitchEnabled ? (
-                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/25 text-xs animate-pulse">
-                    <span>Checking {currentProvider.name} ({countdown}s)...</span>
-                    <button
-                      onClick={() => skipToNextServer("User skipped")}
-                      className="ml-1 font-semibold underline hover:text-amber-400 cursor-pointer"
-                    >
-                      Skip
-                    </button>
-                    <button
-                      onClick={cancelAutoSwitch}
-                      className="text-muted-foreground hover:text-foreground cursor-pointer ml-0.5"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ) : playbackConfirmed ? (
+                {playbackConfirmed ? (
                   <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs">
                     <Check className="h-3 w-3" />
-                    <span>Verified</span>
+                    <span>Stream Active</span>
                   </div>
                 ) : null}
 
@@ -405,7 +385,7 @@ const TitleDetails = () => {
                   type="button"
                   onClick={() => skipToNextServer("User clicked next")}
                   className="flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary transition hover:bg-primary/20 cursor-pointer"
-                  title="Move to next server"
+                  title="If server shows an error, switch to next server"
                 >
                   <SkipForward className="h-3.5 w-3.5" />
                   <span>Next Server</span>

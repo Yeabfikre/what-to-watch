@@ -90,15 +90,11 @@ const Watch = () => {
     providerIdx,
     currentProvider: provider,
     failedProviders,
-    countdown,
     playbackConfirmed,
-    autoSwitchEnabled,
     switchToServer,
     skipToNextServer,
-    cancelAutoSwitch,
   } = useStreamFailover({
     active: !!tmdbId,
-    timeoutSeconds: 8,
     onServerChange: () => setLoading(true),
   });
 
@@ -236,35 +232,23 @@ const Watch = () => {
             </div>
 
             <div className="flex items-center gap-2 text-xs">
-              {/* Failover Status Pill */}
-              {countdown !== null && !playbackConfirmed && autoSwitchEnabled ? (
-                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/25 text-xs animate-pulse">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
-                  </span>
-                  <span>Auto-check ({countdown}s)</span>
-                  <button
-                    onClick={() => skipToNextServer("User skipped")}
-                    className="ml-1 text-[11px] font-semibold underline hover:text-amber-400 cursor-pointer"
-                    title="Skip to next server immediately"
-                  >
-                    Skip
-                  </button>
-                  <button
-                    onClick={cancelAutoSwitch}
-                    className="text-[11px] text-muted-foreground hover:text-foreground cursor-pointer ml-0.5"
-                    title="Pause auto-switching"
-                  >
-                    ✕
-                  </button>
-                </div>
-              ) : playbackConfirmed ? (
+              {playbackConfirmed ? (
                 <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs">
                   <Check className="h-3 w-3" />
-                  <span className="hidden sm:inline">Stream Verified</span>
+                  <span className="hidden sm:inline">Stream Active</span>
                 </div>
               ) : null}
+
+              {/* Instant Next Server Action if Current Server Shows Error */}
+              <button
+                type="button"
+                onClick={() => skipToNextServer("User requested next server")}
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-primary/40 bg-primary/10 text-primary hover:bg-primary/20 active:scale-95 text-xs font-semibold transition cursor-pointer"
+                title="If current server shows an error or doesn't play, switch to next server"
+              >
+                <SkipForward className="h-3.5 w-3.5" />
+                <span>Next Server</span>
+              </button>
 
               <div className="flex items-center gap-1.5 text-muted-foreground">
                 <span className="hidden sm:inline">Server:</span>

@@ -4,22 +4,19 @@ import { toast } from "@/components/ui/use-toast";
 
 interface UseStreamFailoverOptions {
   active: boolean;
-  timeoutSeconds?: number;
   initialProviderIdx?: number;
   onServerChange?: (idx: number) => void;
 }
 
 export function useStreamFailover({
   active,
-  timeoutSeconds = 7,
   initialProviderIdx = 0,
   onServerChange,
 }: UseStreamFailoverOptions) {
   const [providerIdx, setProviderIdx] = useState(initialProviderIdx);
   const [failedProviders, setFailedProviders] = useState<number[]>([]);
-  const [countdown, setCountdown] = useState<number | null>(null);
   const [playbackConfirmed, setPlaybackConfirmed] = useState(false);
-  const [autoSwitchEnabled, setAutoSwitchEnabled] = useState(true);
+  const [lastErrorMessage, setLastErrorMessage] = useState<string | null>(null);
 
   const providerIdxRef = useRef(providerIdx);
   providerIdxRef.current = providerIdx;
@@ -27,25 +24,22 @@ export function useStreamFailover({
   const failedProvidersRef = useRef(failedProviders);
   failedProvidersRef.current = failedProviders;
 
-  const autoSwitchEnabledRef = useRef(autoSwitchEnabled);
-  autoSwitchEnabledRef.current = autoSwitchEnabled;
-
-  const playbackConfirmedRef = useRef(playbackConfirmed);
-  playbackConfirmedRef.current = playbackConfirmed;
-
-  // Switch to specific server
+  // Switch to a specific server
   const switchToServer = useCallback(
-    (idx: number, isAutoFailover = false) => {
+    (idx: number, isAutoFailover = false, reason?: string) => {
       if (idx === providerIdxRef.current && !isAutoFailover) return;
-      const targetProvider = PROVIDERS[idx] || PROVIDERS[0];
+      const prevName = PROVIDERS[providerIdxRef.current]?.name || "Current server";
+      const nextProvider = PROVIDERS[idx] || PROVIDERS[0];
+
       setProviderIdx(idx);
       setPlaybackConfirmed(false);
+      setLastErrorMessage(reason || null);
       onServerChange?.(idx);
 
       if (isAutoFailover) {
         toast({
-          title: "Switching Server",
-          description: `Server ${PROVIDERS[providerIdxRef.current]?.name || ""} unavailable. Now trying ${targetProvider.name}...`,
+          title: "Switched to Next Server",
+          description: `${prevName} reported an error (${reason || "Unavailable"}). Now streaming from ${nextProvider.name}.`,
         });
       }
     },
@@ -54,11 +48,11 @@ export function useStreamFailover({
 
   // Skip to next untried server
   const skipToNextServer = useCallback(
-    (reason = "User skipped") => {
+    (reason = "Server issue reported") => {
       const current = providerIdxRef.current;
       const failed = failedProvidersRef.current;
 
-      // Mark current as failed if not already
+      // Mark current as having an issue
       if (!failed.includes(current)) {
         setFailedProviders((prev) => [...prev, current]);
       }
@@ -72,17 +66,12 @@ export function useStreamFailover({
       }
 
       if (count >= PROVIDERS.length) {
-        // All have failed once, reset failed list and loop
-        toast({
-          variant: "destructive",
-          title: "All Servers Tested",
-          description: "All streaming servers were attempted. Cycling back to Server 1.",
-        });
+        // All have had issues, reset list and loop
         setFailedProviders([]);
         nextIdx = (current + 1) % PROVIDERS.length;
       }
 
-      switchToServer(nextIdx, true);
+      switchToServer(nextIdx, true, reason);
     },
     [switchToServer]
   );
@@ -93,8 +82,16 @@ export function useStreamFailover({
 
     const handleMessage = (event: MessageEvent) => {
       try {
-        const data = event.data;
-        // Success signals: vidsrc sends MEDIA_DATA on valid stream load
+        let data = event.data;
+        if (typeof data === "string") {
+          try {
+            data = JSON.parse(data);
+          } catch {
+            // plain string
+          }
+        }
+
+        // Check for success signals
         if (
           data?.type === "MEDIA_DATA" ||
           data?.type === "PLAYER_READY" ||
@@ -103,29 +100,69 @@ export function useStreamFailover({
           data?.status === "playing"
         ) {
           setPlaybackConfirmed(true);
-          setCountdown(null);
+          setLastErrorMessage(null);
+          return;
         }
 
-        // Error signals
-        if (
-          data?.type === "ERROR" ||
-          data?.type === "playback_error" ||
+        // Check for error signals from server/player
+        const isErrorType =
+          typeof data?.type === "string" &&
+          (data.type.toLowerCase().includes("error") ||
+            data.type.toLowerCase().includes("fail"));
+
+        const isErrorEvent =
+          typeof data?.event === "string" &&
+          (data.event.toLowerCase().includes("error") ||
+            data.event.toLowerCase().includes("fail"));
+
+        const isErrorStatus =
+          typeof data?.status === "string" &&
+          (data.status.toLowerCase().includes("error") ||
+            data.status.toLowerCase().includes("unavailable"));
+
+        const hasErrorMessage =
+          typeof data?.message === "string" &&
+          (data.message.toLowerCase().includes("error") ||
+            data.message.toLowerCase().includes("no valid source") ||
+            data.message.toLowerCase().includes("failed to load"));
+
+        const hasErrorField =
+          Boolean(data?.error) ||
           data?.error === "no_source" ||
-          data === "error"
+          data?.code === "MEDIA_ERR_SRC_NOT_SUPPORTED";
+
+        const isStringError =
+          typeof data === "string" &&
+          (data.toLowerCase().includes("error") ||
+            data.toLowerCase().includes("no_source") ||
+            data.toLowerCase().includes("playback_error"));
+
+        if (
+          isErrorType ||
+          isErrorEvent ||
+          isErrorStatus ||
+          hasErrorMessage ||
+          hasErrorField ||
+          isStringError
         ) {
-          skipToNextServer("Server reported playback error");
+          const reasonText =
+            typeof data?.message === "string"
+              ? data.message
+              : typeof data?.error === "string"
+              ? data.error
+              : "Playback error received from server";
+          skipToNextServer(reasonText);
         }
       } catch {
         // ignore cross-origin access issues
       }
     };
 
-    // When user clicks inside iframe, window blurs
+    // When user clicks inside iframe to play, window blurs
     const handleBlur = () => {
       setTimeout(() => {
         if (document.activeElement?.tagName === "IFRAME") {
           setPlaybackConfirmed(true);
-          setCountdown(null);
         }
       }, 50);
     };
@@ -139,59 +176,14 @@ export function useStreamFailover({
     };
   }, [active, skipToNextServer]);
 
-  // Countdown timer for automatic failover
-  useEffect(() => {
-    if (!active || !autoSwitchEnabled || playbackConfirmed) {
-      setCountdown(null);
-      return;
-    }
-
-    setCountdown(timeoutSeconds);
-
-    const interval = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev === null) return null;
-        if (prev <= 1) {
-          clearInterval(interval);
-          skipToNextServer("Timeout: no stream detected");
-          return null;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [active, providerIdx, autoSwitchEnabled, playbackConfirmed, timeoutSeconds, skipToNextServer]);
-
-  const cancelAutoSwitch = useCallback(() => {
-    setAutoSwitchEnabled(false);
-    setCountdown(null);
-    toast({
-      title: "Auto-Switch Paused",
-      description: "Automatic server switching is now paused. You can switch servers manually.",
-    });
-  }, []);
-
-  const resumeAutoSwitch = useCallback(() => {
-    setAutoSwitchEnabled(true);
-    setCountdown(timeoutSeconds);
-    toast({
-      title: "Auto-Switch Enabled",
-      description: "Automatic server failover resumed.",
-    });
-  }, [timeoutSeconds]);
-
   return {
     providerIdx,
     currentProvider: PROVIDERS[providerIdx] || PROVIDERS[0],
     failedProviders,
-    countdown,
     playbackConfirmed,
-    autoSwitchEnabled,
+    lastErrorMessage,
     switchToServer,
     skipToNextServer,
-    cancelAutoSwitch,
-    resumeAutoSwitch,
     setPlaybackConfirmed,
   };
 }
