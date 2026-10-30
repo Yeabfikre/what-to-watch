@@ -55,6 +55,7 @@ const MovieDetailModal = ({ details, onClose, mediaType }: MovieDetailModalProps
   const [isMuted, setIsMuted] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showTrailer, setShowTrailer] = useState(false);
+  const [isDownloadOpen, setIsDownloadOpen] = useState(false);
   const [showSimilar, setShowSimilar] = useState(false);
   const [selectedSeason, setSelectedSeason] = useState(1);
   const [isInWatchlist, setIsInWatchlist] = useState(false);
@@ -178,13 +179,7 @@ const MovieDetailModal = ({ details, onClose, mediaType }: MovieDetailModalProps
   };
 
   const handleDownload = () => {
-    const streamLink = `${window.location.origin}/watch?id=${details.id}&type=${isTV ? "tv" : "movie"}&title=${encodeURIComponent(title)}`;
-    navigator.clipboard.writeText(streamLink);
-    toast({
-      title: "Direct High-Speed Stream Ready",
-      description: "Stream link copied to clipboard! Opening playback stream now.",
-    });
-    handleStream();
+    setIsDownloadOpen(true);
   };
 
   const handleToggleWatchlist = () => {

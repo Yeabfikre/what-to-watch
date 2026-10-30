@@ -35,6 +35,7 @@ import { useStreamFailover } from "@/hooks/useStreamFailover";
 import { SeasonsEpisodesDrawer } from "@/components/title-details/SeasonsEpisodesDrawer";
 import { CastAndStudiosSection } from "@/components/title-details/CastAndStudiosSection";
 import { BackgroundTrailer } from "@/components/title-details/BackgroundTrailer";
+import { DownloadModal } from "@/components/DownloadModal";
 import { PROVIDERS, type StreamProvider } from "@/config/providers";
 import {
   tmdbImg,
@@ -83,6 +84,7 @@ const TitleDetails = () => {
 
   // Streaming player state
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isDownloadOpen, setIsDownloadOpen] = useState(false);
   const playerRef = useRef<HTMLDivElement>(null);
 
   // Automatic Server Failover Hook
@@ -274,13 +276,7 @@ const TitleDetails = () => {
   };
 
   const handleDownload = () => {
-    const streamLink = `${window.location.origin}/watch?id=${details.id}&type=${isTV ? "tv" : "movie"}&title=${encodeURIComponent(title)}`;
-    navigator.clipboard.writeText(streamLink);
-    toast({
-      title: "Direct High-Speed Stream Ready",
-      description: "Direct stream link copied to clipboard. Launching player...",
-    });
-    handleStartStreaming();
+    setIsDownloadOpen(true);
   };
 
   const handleToggleWatchlist = () => {
@@ -445,6 +441,15 @@ const TitleDetails = () => {
                   </button>
                 );
               })}
+              <button
+                type="button"
+                onClick={() => setIsDownloadOpen(true)}
+                className="flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-3.5 py-1.5 text-xs font-bold text-primary hover:bg-primary/20 transition active:scale-95 cursor-pointer sm:ml-auto"
+                title="Download from this or other servers"
+              >
+                <Download className="h-3.5 w-3.5" />
+                <span>Download</span>
+              </button>
             </div>
           </div>
           ) : (
@@ -816,6 +821,23 @@ const TitleDetails = () => {
           studios={studios}
         />
       </div>
+
+      {details && (
+        <DownloadModal
+          isOpen={isDownloadOpen}
+          onClose={() => setIsDownloadOpen(false)}
+          title={title}
+          tmdbId={details.id}
+          type={isTV ? "tv" : "movie"}
+          posterPath={details.poster_path}
+          backdropPath={details.backdrop_path}
+          releaseDate={details.release_date || details.first_air_date}
+          seasons={details.seasons}
+          initialSeason={selectedSeason}
+          initialEpisode={selectedEpisode}
+          initialServerIdx={currentProviderIndex}
+        />
+      )}
 
       <Footer />
     </div>

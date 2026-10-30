@@ -1,5 +1,6 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
 import {
+  Download,
   Loader2,
   Play,
   Star,
@@ -39,6 +40,7 @@ import {
   type TmdbMovie,
 } from "@/lib/tmdb";
 import { PROVIDERS } from "@/config/providers";
+import { DownloadModal } from "@/components/DownloadModal";
 
 const CopyLinkButton = ({ tmdbId, type, title }: { tmdbId: string; type: string; title: string }) => {
   const [copied, setCopied] = useState(false);
@@ -81,6 +83,7 @@ const Watch = () => {
   const initialEpisode = Math.max(1, Number(params.get("episode")) || 1);
 
   const [loading, setLoading] = useState(true);
+  const [downloadModalOpen, setDownloadModalOpen] = useState(false);
   const [showTrailer, setShowTrailer] = useState(false);
   const [selectedSeason, setSelectedSeason] = useState(initialSeason);
   const [selectedEpisode, setSelectedEpisode] = useState(initialEpisode);
@@ -242,6 +245,16 @@ const Watch = () => {
               {/* Instant Next Server Action if Current Server Shows Error */}
               <button
                 type="button"
+                onClick={() => setDownloadModalOpen(true)}
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-primary/40 bg-primary/10 text-primary hover:bg-primary/20 active:scale-95 text-xs font-semibold transition cursor-pointer"
+                title="Download this video from any server"
+              >
+                <Download className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Download</span>
+              </button>
+
+              <button
+                type="button"
                 onClick={() => skipToNextServer("User requested next server")}
                 className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-primary/40 bg-primary/10 text-primary hover:bg-primary/20 active:scale-95 text-xs font-semibold transition cursor-pointer"
                 title="If current server shows an error or doesn't play, switch to next server"
@@ -336,6 +349,15 @@ const Watch = () => {
 
             {/* Quick Actions: Copy Link & Title Details */}
             <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+              <button
+                type="button"
+                onClick={() => setDownloadModalOpen(true)}
+                className="flex items-center gap-1.5 rounded-lg border border-primary/40 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/20 transition active:scale-95 cursor-pointer"
+                title="Download this video from any server"
+              >
+                <Download className="h-3.5 w-3.5" />
+                <span>Download</span>
+              </button>
               <CopyLinkButton tmdbId={tmdbId} type={type} title={displayTitle} />
               {tmdbId && (
                 <button
