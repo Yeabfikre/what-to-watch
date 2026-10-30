@@ -132,6 +132,8 @@ export interface TmdbMovie {
   media_type?: string;
 }
 
+export type TmdbCast = TmdbCastMember;
+
 export interface TmdbCastMember {
   id: number;
   name: string;

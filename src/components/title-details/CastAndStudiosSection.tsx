@@ -1,10 +1,10 @@
 import React from "react";
 import { Building2, Film, User } from "lucide-react";
-import { tmdbImg, type TmdbCast, type TmdbProductionCompany } from "@/lib/tmdb";
+import { tmdbImg, type TmdbCastMember, type TmdbProductionCompany } from "@/lib/tmdb";
 
 interface CastAndStudiosSectionProps {
   isTV: boolean;
-  cast: TmdbCast[];
+  cast: TmdbCastMember[];
   directorName: string;
   directorPhoto: string | null;
   studios: TmdbProductionCompany[];
