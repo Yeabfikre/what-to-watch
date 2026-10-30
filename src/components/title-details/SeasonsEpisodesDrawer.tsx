@@ -80,13 +80,13 @@ export const SeasonsEpisodesDrawer: React.FC<SeasonsEpisodesDrawerProps> = ({
               type="button"
               key={ep.id}
               onClick={() => onSelectEpisode(ep.episode_number)}
-              className={`flex gap-3.5 rounded-2xl border p-3 text-left transition active:scale-[0.99] cursor-pointer group focus:outline-none shadow-sm ${
+              className={`flex gap-3 rounded-lg border p-2.5 text-left transition active:scale-[0.99] cursor-pointer group focus:outline-none shadow-sm ${
                 isCurrent
                   ? "border-primary bg-primary/10 ring-1 ring-primary/40"
                   : "border-border bg-card hover:border-primary/40 hover:bg-secondary/40"
               }`}
             >
-              <div className="h-18 w-28 shrink-0 overflow-hidden rounded-xl bg-muted relative border border-border/50">
+              <div className="h-16 w-24 sm:h-18 sm:w-28 shrink-0 overflow-hidden rounded-md bg-muted relative border border-border/50">
                 {stillUrl ? (
                   <img
                     src={stillUrl}
