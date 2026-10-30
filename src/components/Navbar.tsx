@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ChevronDown, Menu } from "lucide-react";
@@ -39,6 +39,30 @@ const Navbar = ({ onMovieClick }: NavbarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [catOpen, setCatOpen] = useState(false);
+  const catCloseTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleCatEnter = () => {
+    if (catCloseTimerRef.current) {
+      clearTimeout(catCloseTimerRef.current);
+      catCloseTimerRef.current = null;
+    }
+    setCatOpen(true);
+  };
+
+  const handleCatLeave = () => {
+    if (catCloseTimerRef.current) {
+      clearTimeout(catCloseTimerRef.current);
+    }
+    catCloseTimerRef.current = setTimeout(() => {
+      setCatOpen(false);
+    }, 180);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (catCloseTimerRef.current) clearTimeout(catCloseTimerRef.current);
+    };
+  }, []);
 
   const handleMovieSelect = (movie: TmdbMovie) => {
     if (onMovieClick) {
@@ -78,29 +102,51 @@ const Navbar = ({ onMovieClick }: NavbarProps) => {
             {link.label}
           </a>
         ))}
-        <DropdownMenu open={catOpen} onOpenChange={setCatOpen}>
+        <DropdownMenu
+          open={catOpen}
+          onOpenChange={(open) => {
+            if (!open && catCloseTimerRef.current) {
+              clearTimeout(catCloseTimerRef.current);
+            }
+            setCatOpen(open);
+          }}
+        >
           <DropdownMenuTrigger
-            onMouseEnter={() => setCatOpen(true)}
-            onMouseLeave={() => setCatOpen(false)}
-            className={`flex items-center gap-1 text-sm font-medium transition outline-none ${
+            onMouseEnter={handleCatEnter}
+            onMouseLeave={handleCatLeave}
+            className={`flex items-center gap-1 text-sm font-medium transition outline-none cursor-pointer ${
               categoryLinks.some((l) => location.pathname === l.path)
                 ? "text-primary"
                 : "text-foreground/80 hover:text-foreground"
             }`}
           >
-            Categories <ChevronDown className="h-3.5 w-3.5" />
+            Categories{" "}
+            <ChevronDown
+              className={`h-3.5 w-3.5 transition-transform duration-200 ${
+                catOpen ? "rotate-180" : ""
+              }`}
+            />
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="start"
-            onMouseEnter={() => setCatOpen(true)}
-            onMouseLeave={() => setCatOpen(false)}
+            sideOffset={4}
+            onMouseEnter={handleCatEnter}
+            onMouseLeave={handleCatLeave}
+            className="z-50 min-w-[10rem] border border-border/80 bg-card/95 backdrop-blur-md p-1 shadow-xl rounded-xl"
           >
             {categoryLinks.map((link) => (
-              <DropdownMenuItem key={link.path} asChild>
+              <DropdownMenuItem
+                key={link.path}
+                asChild
+                onClick={() => {
+                  if (catCloseTimerRef.current) clearTimeout(catCloseTimerRef.current);
+                  setCatOpen(false);
+                }}
+              >
                 <a
                   href={link.path}
-                  className={`w-full cursor-pointer ${
-                    location.pathname === link.path ? "text-primary" : ""
+                  className={`w-full cursor-pointer rounded-lg px-2.5 py-1.5 text-sm font-medium transition hover:bg-accent ${
+                    location.pathname === link.path ? "text-primary font-semibold" : "text-foreground/90"
                   }`}
                 >
                   {link.label}
